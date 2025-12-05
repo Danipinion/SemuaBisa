@@ -2,65 +2,50 @@ package com.netown.semuabisa.features.train
 
 import android.annotation.SuppressLint
 import android.os.Bundle
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
+import android.widget.Button
+import android.widget.ImageButton
 import android.widget.TextView
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.netown.semuabisa.R
+import com.netown.semuabisa.TrainActivity
 
-class TrainSelectSeatFragment : Fragment() {
+class TrainSelectSeatFragment : Fragment(R.layout.fragment_train_select_seat) {
 
-
-    private lateinit var txtSelectedSeat: TextView
-    private lateinit var seatAdapter: TrainSeatAdapter
-    private lateinit var rvSeat: RecyclerView
     private var selectedCount = 0
-
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        return inflater.inflate(R.layout.fragment_train_select_seat, container, false)
-    }
+    private lateinit var txtSelectedSeat: TextView
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
 
-        rvSeat = view.findViewById(R.id.rvSeatGrid)
-        txtSelectedSeat = view.findViewById(R.id.txtSelectedSeat)
+        view.findViewById<ImageButton>(R.id.btnBack)?.setOnClickListener {
+            parentFragmentManager.popBackStack()
+        }
 
+        val rvSeat = view.findViewById<RecyclerView>(R.id.rvSeatGrid)
+        txtSelectedSeat = view.findViewById<TextView>(R.id.txtSelectedSeat)
+        val btnContinue = view.findViewById<Button>(R.id.btnPay)
 
-        // ⬇️ Ambil data kursi dari fungsi dummy
-        val seatList = generateSeats()
+        val seatList = List(32) { i ->
+            Seat(i, if (i % 5 == 0) SeatStatus.TAKEN else SeatStatus.AVAILABLE)
+        }
 
-        seatAdapter = TrainSeatAdapter(seatList) { seat ->
-            updateSelectedSeatCount(seatList)
+        val adapter = TrainSeatAdapter(seatList) { _ ->
+            selectedCount = seatList.count { it.status == SeatStatus.SELECTED }
+            txtSelectedSeat.text = "Selected: $selectedCount"
         }
 
         rvSeat.layoutManager = GridLayoutManager(requireContext(), 4)
-        rvSeat.adapter = seatAdapter
-    }
+        rvSeat.adapter = adapter
 
-    // ⬇️  ⬇️  ⬇️ TARUH FUNGSI INI DI DALAM TrainSelectSeatFragment
-    private fun generateSeats(): List<Seat> {
-        val seats = mutableListOf<Seat>()
-
-        for (i in 0 until 32) {
-            val type = when {
-                i % 4 == 3 -> SeatStatus.TAKEN     // kolom ke-4 adalah X
-                else -> SeatStatus.AVAILABLE
+        btnContinue?.setOnClickListener {
+            if (selectedCount > 0) {
+                (activity as? TrainActivity)?.loadFragment(TicketTrainFragment())
+            } else {
+                Toast.makeText(context, "Pilih kursi dulu!", Toast.LENGTH_SHORT).show()
             }
-            seats.add(Seat(i, type))
         }
-        return seats
-    }
-
-    @SuppressLint("SetTextI18n")
-    private fun updateSelectedSeatCount(list: List<Seat>) {
-        selectedCount = list.count { it.status == SeatStatus.SELECTED }
-        txtSelectedSeat.text = "Selected Seat $selectedCount of 3"
     }
 }

@@ -11,16 +11,14 @@
         android:orientation="vertical"
         android:padding="20dp">
 
-        <!-- IMAGE TRAIN -->
         <ImageView
             android:id="@+id/imgTrain"
             android:layout_width="230dp"
             android:layout_height="130dp"
             android:layout_gravity="center"
             android:contentDescription="train"
-            android:src="@drawable/Train" />
+            android:src="@drawable/train" />
 
-        <!-- TITLE -->
         <TextView
             android:id="@+id/txtBooking"
             android:layout_width="wrap_content"
@@ -30,16 +28,14 @@
             android:textSize="24sp"
             android:textStyle="bold" />
 
-        <!-- Booking Details -->
         <TextView
-            android:layout_width="369dp"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="20dp"
             android:text="Booking Details"
             android:textSize="16sp"
             android:textStyle="bold" />
 
-        <!-- FROM -->
         <EditText
             android:id="@+id/edtFrom"
             android:layout_width="match_parent"
@@ -47,9 +43,10 @@
             android:layout_marginTop="8dp"
             android:drawableEnd="@drawable/outline_location_on_24"
             android:hint="From"
+            android:inputType="textCapWords"
+            android:maxLines="1"
             android:padding="12dp" />
 
-        <!-- TO -->
         <EditText
             android:id="@+id/edtTo"
             android:layout_width="match_parent"
@@ -57,20 +54,22 @@
             android:layout_marginTop="12dp"
             android:drawableEnd="@drawable/carbon_map"
             android:hint="To"
+            android:inputType="textCapWords"
+            android:maxLines="1"
             android:padding="12dp" />
 
-        <!-- Date -->
         <EditText
             android:id="@+id/edtDate"
             android:layout_width="match_parent"
             android:layout_height="50dp"
             android:layout_marginTop="12dp"
             android:drawableEnd="@drawable/outline_calendar_month_24"
+            android:focusable="false"
+            android:clickable="true"
             android:hint="Travel Date"
-            android:padding="12dp"
+            android:inputType="none"
+            android:padding="12dp"/>
 
-
-        <!-- PASSENGER TITLE -->
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -78,14 +77,12 @@
             android:text="Passengers Detail"
             android:textStyle="bold" />
 
-        <!-- PASSENGER ROW -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
             android:orientation="vertical">
 
-            <!-- ADULT -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -107,10 +104,13 @@
                     android:orientation="horizontal">
 
                     <ImageView
+                        android:id="@+id/btnMinusAdult"
                         android:layout_width="30dp"
                         android:layout_height="30dp"
                         android:background="#3B82F6"
-                        android:src="@drawable/outline_remove_24" />
+                        android:padding="5dp"
+                        android:src="@drawable/outline_remove_24"
+                        app:tint="#FFFFFF"/>
 
                     <TextView
                         android:id="@+id/txtAdultCount"
@@ -121,14 +121,16 @@
                         android:textSize="18sp" />
 
                     <ImageView
+                        android:id="@+id/btnPlusAdult"
                         android:layout_width="30dp"
                         android:layout_height="30dp"
                         android:background="#3B82F6"
-                        android:src="@drawable/outline_add_24" />
+                        android:padding="5dp"
+                        android:src="@drawable/outline_add_24"
+                        app:tint="#FFFFFF"/>
                 </LinearLayout>
             </LinearLayout>
 
-            <!-- CHILD -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -150,10 +152,13 @@
                     android:orientation="horizontal">
 
                     <ImageView
+                        android:id="@+id/btnMinusChild"
                         android:layout_width="30dp"
                         android:layout_height="30dp"
                         android:background="#3b82f6"
-                        android:src="@drawable/outline_remove_24" />
+                        android:padding="5dp"
+                        android:src="@drawable/outline_remove_24"
+                        app:tint="#FFFFFF"/>
 
                     <TextView
                         android:id="@+id/txtChildCount"
@@ -164,10 +169,13 @@
                         android:textSize="18sp" />
 
                     <ImageView
+                        android:id="@+id/btnPlusChild"
                         android:layout_width="30dp"
                         android:layout_height="30dp"
                         android:background="#3b82f6"
-                        android:src="@drawable/outline_add_24" />
+                        android:padding="5dp"
+                        android:src="@drawable/outline_add_24"
+                        app:tint="#FFFFFF"/>
                 </LinearLayout>
             </LinearLayout>
 
@@ -180,7 +188,6 @@
             android:orientation="horizontal"
             android:gravity="center">
 
-            <!-- JOURNEY TYPE -->
             <LinearLayout
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
@@ -194,25 +201,27 @@
                     android:textStyle="bold" />
 
                 <RadioGroup
+                    android:id="@+id/rgJourneyType"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
                     android:layout_marginTop="8dp">
 
                     <RadioButton
+                        android:id="@+id/rbSingle"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:checked="true"
                         android:text="Single Journey" />
 
                     <RadioButton
+                        android:id="@+id/rbReturn"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Return Journey" />
                 </RadioGroup>
             </LinearLayout>
 
-            <!-- CLASS TYPE -->
             <LinearLayout
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
@@ -226,33 +235,36 @@
                     android:textStyle="bold" />
 
                 <RadioGroup
+                    android:id="@+id/rgClassType"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
                     android:layout_marginTop="8dp">
 
                     <RadioButton
+                        android:id="@+id/rbBusiness"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Business Class" />
 
                     <RadioButton
+                        android:id="@+id/rbEconomy"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:checked="true"
                         android:text="Economy Class" />
                 </RadioGroup>
             </LinearLayout>
 
         </LinearLayout>
 
-
-        <!-- BUTTON -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="30dp"
             android:gravity="center_horizontal"
-            android:orientation="horizontal">
+            android:orientation="horizontal"
+            android:paddingBottom="50dp">
 
             <Button
                 android:id="@+id/btnBack"
@@ -275,8 +287,5 @@
                 android:textColor="#FFFFFF" />
 
         </LinearLayout>
-
-
     </LinearLayout>
-
 </ScrollView>

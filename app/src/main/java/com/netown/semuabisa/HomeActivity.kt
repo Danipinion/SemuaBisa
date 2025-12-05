@@ -24,5 +24,11 @@ class HomeActivity : AppCompatActivity() {
             val intent = Intent(this, LocationActivity::class.java)
             startActivity(intent)
         }
+
+        val menuTrain = findViewById<ImageView>(R.id.menuTrain)
+        menuTrain.setOnClickListener {
+            val intent = Intent(this, TrainActivity::class.java)
+            startActivity(intent)
+        }
     }
 }

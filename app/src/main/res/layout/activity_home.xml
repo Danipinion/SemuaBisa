@@ -198,7 +198,7 @@
                 />
 
             <ImageView android:layout_width="0dp" android:layout_height="60dp" android:layout_columnWeight="1" android:layout_margin="4dp" android:background="@drawable/bg_search_field" android:src="@drawable/bus" android:padding="12dp" />
-            <ImageView android:layout_width="0dp" android:layout_height="60dp" android:layout_columnWeight="1" android:layout_margin="4dp" android:background="@drawable/bg_search_field" android:src="@drawable/train" android:padding="12dp" />
+            <ImageView android:id="@+id/menuTrain" android:layout_width="0dp" android:layout_height="60dp" android:layout_columnWeight="1" android:layout_margin="4dp" android:background="@drawable/bg_search_field" android:src="@drawable/train" android:padding="12dp" />
             <ImageView android:layout_width="0dp" android:layout_height="60dp" android:layout_columnWeight="1" android:layout_margin="4dp" android:background="@drawable/bg_search_field" android:src="@drawable/plane" android:padding="12dp" />
 
         </GridLayout>
