@@ -10,6 +10,8 @@ import android.text.Editable
 import android.text.TextWatcher
 import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
+import android.widget.ArrayAdapter
+import android.widget.AutoCompleteTextView
 import android.widget.EditText
 import android.widget.ImageButton
 import android.widget.LinearLayout
@@ -22,25 +24,26 @@ import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.button.MaterialButton
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import org.json.JSONArray
 import org.json.JSONObject
 import org.osmdroid.config.Configuration
 import org.osmdroid.tileprovider.tilesource.TileSourceFactory
-
 import org.osmdroid.util.BoundingBox
 import org.osmdroid.util.GeoPoint
 import org.osmdroid.views.MapView
 import org.osmdroid.views.overlay.Marker
-import java.util.Locale
 import org.osmdroid.views.overlay.Polyline
 import java.net.HttpURLConnection
 import java.net.URL
-import android.widget.ArrayAdapter
-import android.widget.AutoCompleteTextView
-import kotlinx.coroutines.*
-import org.json.JSONArray
 import java.net.URLEncoder
+import java.util.Locale
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import android.graphics.Color
 
 
 class LocationActivity : AppCompatActivity() {
@@ -50,6 +53,8 @@ class LocationActivity : AppCompatActivity() {
     private lateinit var etDropoff: AutoCompleteTextView
     private lateinit var btnOrder: MaterialButton
     private lateinit var bottomSheetBehavior: BottomSheetBehavior<LinearLayout>
+    private lateinit var locationSheetBehavior: BottomSheetBehavior<LinearLayout>
+    private lateinit var driverSheetBehavior: BottomSheetBehavior<LinearLayout>
 
     private var startPoint: GeoPoint? = null
     private var endPoint: GeoPoint? = null
@@ -57,6 +62,10 @@ class LocationActivity : AppCompatActivity() {
     private var endMarker: Marker? = null
     private var cityBoundingBox: BoundingBox? = null
     private var routePolyline: Polyline? = null
+
+    private lateinit var rvDrivers: RecyclerView
+    private lateinit var adapterDriver: DriverAdapter
+    private val driverList = ArrayList<Driver>()
 
     data class PlaceSuggestion(val displayName: String, val lat: Double, val lon: Double) {
         override fun toString(): String {
@@ -73,19 +82,55 @@ class LocationActivity : AppCompatActivity() {
 
         setContentView(R.layout.activity_location)
         initViews()
+        setupSheets()
         setupMap()
         setupBottomSheet()
         getCurrentLocation()
         setupAutocomplete() // Setup baru
-        setupSearchListeners() // Untuk tombol keyboard enter
+        setupSearchListeners()
+        setupDriverList()
     }
 
     private fun initViews() {
         map = findViewById(R.id.map)
+        rvDrivers = findViewById(R.id.rvDrivers)
         etPickup = findViewById(R.id.etPickup)
         etDropoff = findViewById(R.id.etDropoff) as AutoCompleteTextView
         btnOrder = findViewById(R.id.btnOrder)
         findViewById<ImageButton>(R.id.btnBack).setOnClickListener { finish() }
+        findViewById<MaterialButton>(R.id.btnOrder).setOnClickListener {
+            if (etDropoff.text.isNotEmpty()) {
+                searchLocation(etDropoff.text.toString())
+            }
+        }
+    }
+
+    private fun setupSheets() {
+        // Sheet 1: Lokasi
+        val locSheet = findViewById<LinearLayout>(R.id.locationBottomSheet)
+        locationSheetBehavior = BottomSheetBehavior.from(locSheet)
+        locationSheetBehavior.peekHeight = (90 * resources.displayMetrics.density).toInt()
+
+        // Sheet 2: Driver
+        val drvSheet = findViewById<LinearLayout>(R.id.driverBottomSheet)
+        driverSheetBehavior = BottomSheetBehavior.from(drvSheet)
+        driverSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN // Awal sembunyi
+    }
+
+    private fun setupDriverList() {
+        // Data Dummy
+        driverList.add(Driver("Gustavo Franci", 4.5, "Rp. 15.000", "5 min", 1, "Bike"))
+        driverList.add(Driver("Globallyaass", 4.7, "Rp. 18.000", "7 min", 1, "Bike"))
+        driverList.add(Driver("Madiun Speed", 4.9, "Rp. 14.000", "3 min", 1, "Bike"))
+
+        // Setup Adapter (Kita buat class Adapter sederhana di bawah)
+        adapterDriver = DriverAdapter(driverList) { selectedDriver ->
+            // Handle klik item driver
+            Toast.makeText(this, "Kamu memilih ${selectedDriver.name}", Toast.LENGTH_SHORT).show()
+        }
+
+        rvDrivers.layoutManager = LinearLayoutManager(this)
+        rvDrivers.adapter = adapterDriver
     }
 
     private fun setupAutocomplete() {
@@ -131,10 +176,12 @@ class LocationActivity : AppCompatActivity() {
 
     private suspend fun fetchSuggestions(query: String) {
         val encodedQuery = URLEncoder.encode(query, "UTF-8")
-        var urlString = "https://nominatim.openstreetmap.org/search?q=$encodedQuery&format=json&limit=5&addressdetails=1"
+        var urlString =
+            "https://nominatim.openstreetmap.org/search?q=$encodedQuery&format=json&limit=5&addressdetails=1"
 
         if (cityBoundingBox != null) {
-            val viewBoxStr = "${cityBoundingBox!!.lonWest},${cityBoundingBox!!.latNorth},${cityBoundingBox!!.lonEast},${cityBoundingBox!!.latSouth}"
+            val viewBoxStr =
+                "${cityBoundingBox!!.lonWest},${cityBoundingBox!!.latNorth},${cityBoundingBox!!.lonEast},${cityBoundingBox!!.latSouth}"
             urlString += "&viewbox=$viewBoxStr&bounded=1"
         }
 
@@ -179,14 +226,31 @@ class LocationActivity : AppCompatActivity() {
 
     private fun processSelectedLocation() {
         if (endPoint != null) {
-            // 1. Gambar Rute
             drawRoute()
-            // 2. Pasang Marker
             addDropoffMarker(endPoint!!)
-            // 3. Zoom Fit
             zoomToFitMarkers()
-            // 4. Minimize BottomSheet
-            bottomSheetBehavior.state = BottomSheetBehavior.STATE_COLLAPSED
+
+            // TRANSISI UI: Sembunyikan Input Lokasi -> Tampilkan List Driver
+            locationSheetBehavior.isHideable = true
+            locationSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
+
+            driverSheetBehavior.state = BottomSheetBehavior.STATE_EXPANDED
+
+            // Tampilkan marker driver dummy di sekitar user
+            showDummyDriversOnMap()
+        }
+    }
+
+    private fun showDummyDriversOnMap() {
+        // Contoh: Tambah driver di sekitar startPoint
+        if (startPoint != null) {
+            val driver1Loc = GeoPoint(startPoint!!.latitude + 0.001, startPoint!!.longitude + 0.001)
+            val driverMarker = Marker(map)
+            driverMarker.position = driver1Loc
+            driverMarker.icon = ContextCompat.getDrawable(this, R.drawable.ic_motorpin) // Ganti icon motor
+            driverMarker.title = "Gustavo"
+            map.overlays.add(driverMarker)
+            map.invalidate()
         }
     }
 
@@ -198,15 +262,23 @@ class LocationActivity : AppCompatActivity() {
     }
 
     private fun setupBottomSheet() {
-        val bottomSheetLayout = findViewById<LinearLayout>(R.id.bottomSheet)
+        val bottomSheetLayout = findViewById<LinearLayout>(R.id.locationBottomSheet)
         bottomSheetBehavior = BottomSheetBehavior.from(bottomSheetLayout)
         bottomSheetBehavior.peekHeight = (90 * resources.displayMetrics.density).toInt()
         bottomSheetBehavior.state = BottomSheetBehavior.STATE_COLLAPSED
     }
 
     private fun getCurrentLocation() {
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.ACCESS_FINE_LOCATION), 1)
+        if (ContextCompat.checkSelfPermission(
+                this,
+                Manifest.permission.ACCESS_FINE_LOCATION
+            ) != PackageManager.PERMISSION_GRANTED
+        ) {
+            ActivityCompat.requestPermissions(
+                this,
+                arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),
+                1
+            )
             return
         }
         val fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
@@ -223,7 +295,12 @@ class LocationActivity : AppCompatActivity() {
 
     private fun restrictMapToCity(center: GeoPoint) {
         val radius = 0.2
-        cityBoundingBox = BoundingBox(center.latitude + radius, center.longitude + radius, center.latitude - radius, center.longitude - radius)
+        cityBoundingBox = BoundingBox(
+            center.latitude + radius,
+            center.longitude + radius,
+            center.latitude - radius,
+            center.longitude - radius
+        )
         map.setScrollableAreaLimitDouble(cityBoundingBox)
         map.setMinZoomLevel(13.0)
         map.invalidate()
@@ -236,10 +313,13 @@ class LocationActivity : AppCompatActivity() {
                 val geocoder = Geocoder(this@LocationActivity, Locale.getDefault())
                 val addresses = geocoder.getFromLocation(point.latitude, point.longitude, 1)
                 if (!addresses.isNullOrEmpty()) {
-                    val addressText = addresses[0].thoroughfare ?: addresses[0].subLocality ?: "Lokasi Saya"
+                    val addressText =
+                        addresses[0].thoroughfare ?: addresses[0].subLocality ?: "Lokasi Saya"
                     withContext(Dispatchers.Main) { etPickup.setText(addressText) }
                 }
-            } catch (e: Exception) { e.printStackTrace() }
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
         }
     }
 
@@ -254,9 +334,17 @@ class LocationActivity : AppCompatActivity() {
                     endPoint = GeoPoint(location.latitude, location.longitude)
                     withContext(Dispatchers.Main) { processSelectedLocation() }
                 } else {
-                    withContext(Dispatchers.Main) { Toast.makeText(this@LocationActivity, "Lokasi tidak ditemukan", Toast.LENGTH_SHORT).show() }
+                    withContext(Dispatchers.Main) {
+                        Toast.makeText(
+                            this@LocationActivity,
+                            "Lokasi tidak ditemukan",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    }
                 }
-            } catch (e: Exception) { e.printStackTrace() }
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
         }
     }
 
@@ -264,14 +352,17 @@ class LocationActivity : AppCompatActivity() {
         etDropoff.setOnEditorActionListener { _, actionId, _ ->
             if (actionId == EditorInfo.IME_ACTION_SEARCH || actionId == EditorInfo.IME_ACTION_DONE) {
                 val query = etDropoff.text.toString()
-                if (query.isNotEmpty()) { searchLocation(query); hideKeyboard() }
+                if (query.isNotEmpty()) {
+                    searchLocation(query); hideKeyboard()
+                }
                 true
             } else false
         }
         btnOrder.setOnClickListener {
             val query = etDropoff.text.toString()
-            if (query.isNotEmpty()) { searchLocation(query); hideKeyboard() }
-            else etDropoff.error = "Masukkan tujuan dulu"
+            if (query.isNotEmpty()) {
+                searchLocation(query); hideKeyboard()
+            } else etDropoff.error = "Masukkan tujuan dulu"
         }
     }
 
@@ -289,7 +380,7 @@ class LocationActivity : AppCompatActivity() {
             startMarker = Marker(map)
             startMarker?.setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM)
             startMarker?.setInfoWindow(null)
-            startMarker?.icon = ContextCompat.getDrawable(this, R.drawable.ic_launcher_foreground)
+            startMarker?.icon = ContextCompat.getDrawable(this, R.drawable.avatar)
             map.overlays.add(startMarker)
         }
         startMarker?.position = point
@@ -301,7 +392,7 @@ class LocationActivity : AppCompatActivity() {
             endMarker = Marker(map)
             endMarker?.setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM)
             endMarker?.setInfoWindow(null)
-            endMarker?.icon = ContextCompat.getDrawable(this, R.drawable.ic_launcher_foreground)
+            endMarker?.icon = ContextCompat.getDrawable(this, R.drawable.ic_location)
             map.overlays.add(endMarker)
         }
         endMarker?.position = point
@@ -313,7 +404,8 @@ class LocationActivity : AppCompatActivity() {
         if (startPoint == null || endPoint == null) return
         CoroutineScope(Dispatchers.IO).launch {
             try {
-                val routeUrl = "https://router.project-osrm.org/route/v1/driving/${startPoint!!.longitude},${startPoint!!.latitude};${endPoint!!.longitude},${endPoint!!.latitude}?overview=full&geometries=polyline"
+                val routeUrl =
+                    "https://router.project-osrm.org/route/v1/driving/${startPoint!!.longitude},${startPoint!!.latitude};${endPoint!!.longitude},${endPoint!!.latitude}?overview=full&geometries=polyline"
                 val url = URL(routeUrl)
                 val connection = url.openConnection() as HttpURLConnection
                 connection.requestMethod = "GET"
@@ -334,7 +426,9 @@ class LocationActivity : AppCompatActivity() {
                         }
                     }
                 }
-            } catch (e: Exception) { e.printStackTrace() }
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
         }
     }
 
@@ -345,7 +439,9 @@ class LocationActivity : AppCompatActivity() {
         var lat = 0
         var lng = 0
         while (index < len) {
-            var b: Int; var shift = 0; var result = 0
+            var b: Int;
+            var shift = 0;
+            var result = 0
             do {
                 b = encoded[index++].code - 63
                 result = result or (b and 0x1f shl shift)
