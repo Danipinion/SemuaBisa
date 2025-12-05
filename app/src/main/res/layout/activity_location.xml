@@ -1,0 +1,168 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/mainLayout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/bg_secondary">
+
+    <org.osmdroid.views.MapView
+        android:id="@+id/map"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:clickable="true"
+        android:focusable="true" />
+
+    <ImageButton
+        android:id="@+id/btnBack"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:layout_margin="@dimen/space_lg"
+        android:background="@drawable/bg_circle_social"
+        android:elevation="6dp"
+        android:src="@drawable/ic_back"
+        android:padding="12dp"
+        app:tint="@color/neutral_text_primary"
+        app:layout_anchor="@id/map"
+        app:layout_anchorGravity="top|start"/>
+
+    <LinearLayout
+        android:id="@+id/locationBottomSheet"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/bg_bottom_sheet_rounded"
+        android:orientation="vertical"
+        android:elevation="20dp"
+        android:paddingHorizontal="@dimen/space_lg"
+        android:paddingBottom="@dimen/space_xl"
+        app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior"
+        app:behavior_peekHeight="90dp"
+        app:behavior_hideable="false">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingTop="@dimen/space_md"
+            android:paddingBottom="@dimen/space_md"
+            android:gravity="center_horizontal">
+
+            <View
+                android:layout_width="40dp"
+                android:layout_height="4dp"
+                android:background="@drawable/bg_search_field"
+                android:backgroundTint="#D1D5DB" />
+
+            <TextView
+                style="@style/Typography.H2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/space_md"
+                android:text="Choose your location"/>
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/contentArea"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingTop="@dimen/space_sm">
+
+            <TextView
+                style="@style/Typography.Caption"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Pickup Point"
+                android:layout_marginBottom="4dp"/>
+
+            <EditText
+                android:id="@+id/etPickup"
+                style="@style/Typography.BodyMd"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:background="@drawable/bg_search_field"
+                android:hint="Cari tujuan..."
+                android:paddingHorizontal="@dimen/space_md"
+                android:layout_marginBottom="@dimen/space_xl"/>
+
+            <TextView
+                style="@style/Typography.Caption"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Pickoff Point"
+                android:layout_marginBottom="4dp"/>
+
+            <AutoCompleteTextView
+                android:id="@+id/etDropoff"
+                style="@style/Typography.BodyMd"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:background="@drawable/bg_search_field"
+                android:hint="Cari tujuan..."
+                android:paddingHorizontal="@dimen/space_md"
+                android:layout_marginBottom="@dimen/space_xl"
+                android:completionThreshold="3"
+                android:imeOptions="actionSearch"
+                android:inputType="textCapWords"/>
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnOrder"
+                style="@style/Button.Primary"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/button_height"
+                android:textAllCaps="false"
+                android:text="Find Now" />
+
+            <View android:layout_width="match_parent" android:layout_height="20dp"/>
+
+        </LinearLayout>
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/driverBottomSheet"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/bg_bottom_sheet_rounded"
+        android:orientation="vertical"
+        android:elevation="20dp"
+        android:paddingHorizontal="@dimen/space_lg"
+        android:paddingBottom="@dimen/space_xl"
+        app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior"
+        app:behavior_peekHeight="0dp"
+        app:behavior_hideable="true">
+
+        <View
+            android:layout_width="40dp"
+            android:layout_height="4dp"
+            android:layout_gravity="center"
+            android:layout_marginTop="@dimen/space_md"
+            android:background="@drawable/bg_search_field"
+            android:backgroundTint="#D1D5DB" />
+
+        <TextView
+            style="@style/Typography.H3"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginVertical="@dimen/space_lg"
+            android:text="Choose a Driver"/>
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rvDrivers"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/space_lg"
+            tools:listitem="@layout/item_driver" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnSelectDriver"
+            style="@style/Button.Primary"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/button_height"
+            android:textAllCaps="false"
+            android:text="Select Driver" />
+
+    </LinearLayout>
+
+</androidx.coordinatorlayout.widget.CoordinatorLayout>
