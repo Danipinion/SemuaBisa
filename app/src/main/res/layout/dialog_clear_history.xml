@@ -9,7 +9,7 @@
 
     <!-- Icon Logout -->
     <ImageView
-        android:id="@+id/imgTrashIcon"
+        android:id="@+id/imgClearHistoryIcon"
         android:layout_width="60dp"
         android:layout_height="60dp"
         android:src="@drawable/solar_history_2_bold"
@@ -17,7 +17,7 @@
 
     <!-- Text -->
     <TextView
-        android:id="@+id/tvCacheTitle"
+        android:id="@+id/tvHistoryTitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Do you want to Clear History from\nThis app?"

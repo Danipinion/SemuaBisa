@@ -104,6 +104,7 @@
 
         <!-- Driver Favourites -->
         <LinearLayout
+            android:id="@+id/btnDriverFav"
             android:layout_width="match_parent"
             android:layout_height="50dp"
             android:gravity="center_vertical"
@@ -133,6 +134,7 @@
 
         <!-- Clear Cache -->
         <LinearLayout
+            android:id="@+id/btnClearCache"
             android:layout_width="match_parent"
             android:layout_height="50dp"
             android:gravity="center_vertical"
@@ -162,6 +164,7 @@
 
         <!-- Clear History -->
         <LinearLayout
+            android:id="@+id/btnClearHistory"
             android:layout_width="match_parent"
             android:layout_height="50dp"
             android:gravity="center_vertical"
@@ -191,6 +194,7 @@
 
         <!-- Logout -->
         <LinearLayout
+            android:id="@+id/btnLogout"
             android:layout_width="match_parent"
             android:layout_height="50dp"
             android:gravity="center_vertical"
