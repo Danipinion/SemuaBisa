@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ripple xmlns:android="http://schemas.android.com/apk/res/android"
+    android:color="#1AD32F2F">   <!-- Ripple merah transparan -->
+
+    <item>
+        <shape android:shape="rectangle">
+
+            <!-- Background putih -->
+            <solid android:color="@android:color/white"/>
+
+            <!-- Border merah -->
+            <stroke
+                android:width="2dp"
+                android:color="#D32F2F"/>
+
+            <!-- Rounded corner -->
+            <corners android:radius="10dp"/>
+
+        </shape>
+    </item>
+
+</ripple>
