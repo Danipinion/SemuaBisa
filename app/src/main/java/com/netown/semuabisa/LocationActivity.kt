@@ -44,6 +44,8 @@ import java.util.Locale
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import android.graphics.Color
+import android.widget.RadioButton
+import android.widget.TextView
 
 
 class LocationActivity : AppCompatActivity() {
@@ -55,6 +57,11 @@ class LocationActivity : AppCompatActivity() {
     private lateinit var bottomSheetBehavior: BottomSheetBehavior<LinearLayout>
     private lateinit var locationSheetBehavior: BottomSheetBehavior<LinearLayout>
     private lateinit var driverSheetBehavior: BottomSheetBehavior<LinearLayout>
+    private lateinit var confirmationSheetBehavior: BottomSheetBehavior<LinearLayout>
+    private lateinit var paymentSheetBehavior: BottomSheetBehavior<LinearLayout>
+
+    private var selectedDriver: Driver? = null
+    private lateinit var rbCash: RadioButton
 
     private var startPoint: GeoPoint? = null
     private var endPoint: GeoPoint? = null
@@ -86,9 +93,11 @@ class LocationActivity : AppCompatActivity() {
         setupMap()
         setupBottomSheet()
         getCurrentLocation()
-        setupAutocomplete() // Setup baru
+        setupAutocomplete()
         setupSearchListeners()
         setupDriverList()
+        setupConfirmationLogic()
+        setupPaymentLogic()
     }
 
     private fun initViews() {
@@ -97,6 +106,8 @@ class LocationActivity : AppCompatActivity() {
         etPickup = findViewById(R.id.etPickup)
         etDropoff = findViewById(R.id.etDropoff) as AutoCompleteTextView
         btnOrder = findViewById(R.id.btnOrder)
+        rbCash = findViewById(R.id.rbCash)
+
         findViewById<ImageButton>(R.id.btnBack).setOnClickListener { finish() }
         findViewById<MaterialButton>(R.id.btnOrder).setOnClickListener {
             if (etDropoff.text.isNotEmpty()) {
@@ -106,60 +117,117 @@ class LocationActivity : AppCompatActivity() {
     }
 
     private fun setupSheets() {
-        // Sheet 1: Lokasi
         val locSheet = findViewById<LinearLayout>(R.id.locationBottomSheet)
         locationSheetBehavior = BottomSheetBehavior.from(locSheet)
         locationSheetBehavior.peekHeight = (90 * resources.displayMetrics.density).toInt()
 
-        // Sheet 2: Driver
         val drvSheet = findViewById<LinearLayout>(R.id.driverBottomSheet)
         driverSheetBehavior = BottomSheetBehavior.from(drvSheet)
-        driverSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN // Awal sembunyi
+        driverSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
+
+        val confSheet = findViewById<LinearLayout>(R.id.confirmationBottomSheet)
+        confirmationSheetBehavior = BottomSheetBehavior.from(confSheet)
+        confirmationSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
+
+        val paySheet = findViewById<LinearLayout>(R.id.paymentBottomSheet)
+        paymentSheetBehavior = BottomSheetBehavior.from(paySheet)
+        paymentSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
     }
 
     private fun setupDriverList() {
-        // Data Dummy
         driverList.add(Driver("Gustavo Franci", 4.5, "Rp. 15.000", "5 min", 1, "Bike"))
         driverList.add(Driver("Globallyaass", 4.7, "Rp. 18.000", "7 min", 1, "Bike"))
         driverList.add(Driver("Madiun Speed", 4.9, "Rp. 14.000", "3 min", 1, "Bike"))
 
-        // Setup Adapter (Kita buat class Adapter sederhana di bawah)
-        adapterDriver = DriverAdapter(driverList) { selectedDriver ->
-            // Handle klik item driver
-            Toast.makeText(this, "Kamu memilih ${selectedDriver.name}", Toast.LENGTH_SHORT).show()
+        adapterDriver = DriverAdapter(driverList) { driver ->
+            selectedDriver = driver
         }
 
         rvDrivers.layoutManager = LinearLayoutManager(this)
         rvDrivers.adapter = adapterDriver
+
+        findViewById<MaterialButton>(R.id.btnSelectDriver).setOnClickListener {
+            if (selectedDriver != null) {
+                showConfirmationSheet(selectedDriver!!)
+            } else {
+                Toast.makeText(this, "Pilih driver terlebih dahulu", Toast.LENGTH_SHORT).show()
+            }
+        }
+    }
+
+    private fun showConfirmationSheet(driver: Driver) {
+        findViewById<TextView>(R.id.tvConfDriverName).text = driver.name
+        findViewById<TextView>(R.id.tvConfRating).text = "⭐ ${driver.rating}"
+        findViewById<TextView>(R.id.tvConfPrice).text = driver.price
+        findViewById<TextView>(R.id.tvConfTime).text = driver.time
+        findViewById<TextView>(R.id.tvConfSeats).text = "${driver.seats}"
+
+        driverSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
+        confirmationSheetBehavior.state = BottomSheetBehavior.STATE_EXPANDED
+    }
+
+    private fun setupConfirmationLogic() {
+        findViewById<ImageButton>(R.id.btnCloseConfirmation).setOnClickListener {
+            confirmationSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
+            driverSheetBehavior.state = BottomSheetBehavior.STATE_EXPANDED
+        }
+
+        findViewById<MaterialButton>(R.id.btnOrderNow).setOnClickListener {
+            if (selectedDriver == null) {
+                Toast.makeText(this, "Kesalahan: Driver tidak terpilih.", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
+
+            confirmationSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
+            paymentSheetBehavior.state = BottomSheetBehavior.STATE_EXPANDED
+
+            rbCash.isChecked = true
+        }
+    }
+
+    private fun setupPaymentLogic() {
+        findViewById<ImageButton>(R.id.btnClosePayment).setOnClickListener {
+            paymentSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
+            confirmationSheetBehavior.state = BottomSheetBehavior.STATE_EXPANDED
+        }
+
+        findViewById<MaterialButton>(R.id.btnContinuePayment).setOnClickListener {
+            if (rbCash.isChecked) {
+                Toast.makeText(this, "Pembayaran CASH dipilih. Pesanan sedang diproses!", Toast.LENGTH_LONG).show()
+
+                paymentSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
+
+                selectedDriver = null
+                map.overlays.clear()
+                map.invalidate()
+
+            } else {
+                Toast.makeText(this, "Saat ini hanya metode Cash yang didukung.", Toast.LENGTH_SHORT).show()
+            }
+        }
     }
 
     private fun setupAutocomplete() {
-        // Gunakan layout custom 'item_suggestion' agar teks terlihat jelas
         suggestionAdapter = ArrayAdapter(this, R.layout.item_suggestion, ArrayList())
         etDropoff.setAdapter(suggestionAdapter)
 
-        // 1. Logic saat Saran DIKLIK (Solusi Tepat Sasaran)
         etDropoff.setOnItemClickListener { parent, _, position, _ ->
             val selectedPlace = parent.getItemAtPosition(position) as PlaceSuggestion
 
-            // Langsung gunakan koordinat dari saran (TIDAK PERLU SEARCH ULANG)
             hideKeyboard()
-            etDropoff.setText(selectedPlace.displayName) // Set teks jadi rapi
-            etDropoff.dismissDropDown() // Tutup dropdown
+            etDropoff.setText(selectedPlace.displayName)
+            etDropoff.dismissDropDown()
 
-            // Set End Point & Gambar Rute
             endPoint = GeoPoint(selectedPlace.lat, selectedPlace.lon)
-            processSelectedLocation() // Fungsi baru untuk handle UI map
+            processSelectedLocation()
         }
 
-        // 2. Logic saat Mengetik
         etDropoff.addTextChangedListener(object : TextWatcher {
             private var searchJob: Job? = null
 
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
                 searchJob?.cancel()
-                // Jangan hapus adapter disini agar tidak kedip
             }
 
             override fun afterTextChanged(s: Editable?) {
@@ -167,7 +235,7 @@ class LocationActivity : AppCompatActivity() {
                 if (query.length < 3) return
 
                 searchJob = CoroutineScope(Dispatchers.IO).launch {
-                    delay(400) // Debounce sedikit lebih lama agar hemat request
+                    delay(400)
                     fetchSuggestions(query)
                 }
             }
@@ -200,7 +268,6 @@ class LocationActivity : AppCompatActivity() {
 
                 for (i in 0 until jsonArray.length()) {
                     val obj = jsonArray.getJSONObject(i)
-                    // Ambil data lengkap
                     val name = obj.getString("display_name")
                     val lat = obj.getDouble("lat")
                     val lon = obj.getDouble("lon")
@@ -209,13 +276,10 @@ class LocationActivity : AppCompatActivity() {
                 }
 
                 withContext(Dispatchers.Main) {
-                    // Update adapter dengan data baru
                     suggestionAdapter.clear()
                     suggestionAdapter.addAll(newSuggestions)
                     suggestionAdapter.notifyDataSetChanged()
 
-                    // Paksa Dropdown Muncul (Trik Filter)
-                    // Kita gunakan filter kosong agar semua data tampil
                     etDropoff.showDropDown()
                 }
             }
@@ -230,31 +294,27 @@ class LocationActivity : AppCompatActivity() {
             addDropoffMarker(endPoint!!)
             zoomToFitMarkers()
 
-            // TRANSISI UI: Sembunyikan Input Lokasi -> Tampilkan List Driver
             locationSheetBehavior.isHideable = true
             locationSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
 
             driverSheetBehavior.state = BottomSheetBehavior.STATE_EXPANDED
 
-            // Tampilkan marker driver dummy di sekitar user
             showDummyDriversOnMap()
         }
     }
 
     private fun showDummyDriversOnMap() {
-        // Contoh: Tambah driver di sekitar startPoint
         if (startPoint != null) {
             val driver1Loc = GeoPoint(startPoint!!.latitude + 0.001, startPoint!!.longitude + 0.001)
             val driverMarker = Marker(map)
             driverMarker.position = driver1Loc
-            driverMarker.icon = ContextCompat.getDrawable(this, R.drawable.ic_motorpin) // Ganti icon motor
+            driverMarker.icon = ContextCompat.getDrawable(this, R.drawable.ic_motorpin)
             driverMarker.title = "Gustavo"
             map.overlays.add(driverMarker)
             map.invalidate()
         }
     }
 
-    // --- Setup Map & Location ---
     private fun setupMap() {
         map.setTileSource(TileSourceFactory.MAPNIK)
         map.setMultiTouchControls(true)
@@ -306,7 +366,6 @@ class LocationActivity : AppCompatActivity() {
         map.invalidate()
     }
 
-    // --- Helpers Map & Geocoding ---
     private fun getAddressFromLocation(point: GeoPoint) {
         CoroutineScope(Dispatchers.IO).launch {
             try {
@@ -366,7 +425,6 @@ class LocationActivity : AppCompatActivity() {
         }
     }
 
-    // --- Helpers Drawing ---
     private fun clearRoute() {
         if (routePolyline != null) {
             map.overlays.remove(routePolyline)
