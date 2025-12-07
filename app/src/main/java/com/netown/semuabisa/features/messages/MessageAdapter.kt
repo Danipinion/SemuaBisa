@@ -9,11 +9,13 @@ import android.widget.RelativeLayout
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.netown.semuabisa.R
+import androidx.core.graphics.toColorInt
 
-class MessageAdapter(private val list: List<MessageModel>) :
+class MessageAdapter(private val list: MutableList<MessageModel>) :
     RecyclerView.Adapter<MessageAdapter.ViewHolder>() {
 
     private var selectedPosition = -1
+
     class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         val container = view.findViewById<RelativeLayout>(R.id.itemContainer)
         val img = view.findViewById<ImageView>(R.id.imgProfile)
@@ -33,24 +35,31 @@ class MessageAdapter(private val list: List<MessageModel>) :
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val item = list[position]
 
+        // bind UI
         holder.name.text = item.name
         holder.lastMessage.text = item.lastMessage
         holder.time.text = item.time
         holder.img.setImageResource(item.image)
 
-        // Apply highlight berdasarkan selectedPosition
+        // highlight state
         holder.container.setBackgroundColor(
-            if (position == selectedPosition) Color.parseColor("#E5F0FF")
-            else Color.WHITE
+            if (holder.bindingAdapterPosition == selectedPosition)
+                "#E5F0FF".toColorInt()
+            else
+                Color.WHITE
         )
 
-        // OnClick: update selected item
+        // safe click listener
         holder.itemView.setOnClickListener {
-            val previous = selectedPosition
-            selectedPosition = position
 
-            // Refresh: non-highlight → highlight
-            notifyItemChanged(previous)
+            val realPos = holder.bindingAdapterPosition
+            if (realPos == RecyclerView.NO_POSITION) return@setOnClickListener
+
+            val previous = selectedPosition
+            selectedPosition = realPos
+
+            // update UI
+            if (previous != -1) notifyItemChanged(previous)
             notifyItemChanged(selectedPosition)
         }
     }
