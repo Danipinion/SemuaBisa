@@ -50,6 +50,9 @@ import android.widget.TextView
 import android.app.Dialog
 import android.graphics.drawable.ColorDrawable
 import android.view.Window
+import android.graphics.Bitmap
+import android.graphics.drawable.BitmapDrawable
+import android.graphics.drawable.Drawable
 
 
 class LocationActivity : AppCompatActivity() {
@@ -58,6 +61,7 @@ class LocationActivity : AppCompatActivity() {
     private lateinit var etPickup: EditText
     private lateinit var etDropoff: AutoCompleteTextView
     private lateinit var btnOrder: MaterialButton
+    private var vehicleType: String = "Motor"
 
     // Sheets
     private lateinit var locationSheetBehavior: BottomSheetBehavior<LinearLayout>
@@ -96,6 +100,7 @@ class LocationActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         Configuration.getInstance().userAgentValue = "SemuaBisaApp/1.0"
         Configuration.getInstance().load(this, PreferenceManager.getDefaultSharedPreferences(this))
+        vehicleType = intent.getStringExtra("VEHICLE_TYPE") ?: "Motor"
 
         setContentView(R.layout.activity_location)
         initViews()
@@ -162,10 +167,19 @@ class LocationActivity : AppCompatActivity() {
     }
 
     private fun setupDriverList() {
-        driverList.add(Driver("Gustavo Franci", 4.5, "Rp. 15.000", "5 min", 1, "Bike", "B 1234 GFR"))
-        driverList.add(Driver("Globallyaass", 4.7, "Rp. 18.000", "7 min", 1, "Bike", "D 4567 KYT"))
-        driverList.add(Driver("Madiun Speed", 4.9, "Rp. 14.000", "3 min", 1, "Bike", "AE 9988 XX"))
+        driverList.clear()
 
+        if (vehicleType == "Car") {
+            driverList.add(Driver("Budi Car", 4.8, "Rp. 45.000", "7 min", 4, "Car", "B 9999 CAR"))
+            driverList.add(Driver("Siti Drives", 4.9, "Rp. 50.000", "4 min", 4, "Car", "D 8888 SEY"))
+            driverList.add(Driver("Fast Car", 4.6, "Rp. 42.000", "9 min", 6, "Car", "AE 7777 XX"))
+        } else {
+            driverList.add(Driver("Gustavo Franci", 4.5, "Rp. 15.000", "5 min", 1, "Bike", "B 1234 GFR"))
+            driverList.add(Driver("Globallyaass", 4.7, "Rp. 18.000", "7 min", 1, "Bike", "D 4567 KYT"))
+            driverList.add(Driver("Madiun Speed", 4.9, "Rp. 14.000", "3 min", 1, "Bike", "AE 9988 XX"))
+        }
+
+        // Initialize adapter if not done, or notify change
         adapterDriver = DriverAdapter(driverList) { driver ->
             selectedDriver = driver
         }
@@ -379,8 +393,15 @@ class LocationActivity : AppCompatActivity() {
         driverMarker = Marker(map)
         driverMarker?.position = point
         driverMarker?.setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM)
-        driverMarker?.icon = ContextCompat.getDrawable(this, R.drawable.ic_motorpin)
-        driverMarker?.title = "Driver"
+
+        if (vehicleType == "Car") {
+            driverMarker?.icon = ContextCompat.getDrawable(this, R.drawable.ic_car_pin)
+            driverMarker?.title = "Car Driver"
+        } else {
+            driverMarker?.icon = ContextCompat.getDrawable(this, R.drawable.ic_motorpin)
+            driverMarker?.title = "Motor Driver"
+        }
+
         map.overlays.add(driverMarker)
         map.invalidate()
     }
@@ -516,8 +537,15 @@ class LocationActivity : AppCompatActivity() {
             val driver1Loc = GeoPoint(startPoint!!.latitude + 0.001, startPoint!!.longitude + 0.001)
             val driverMarker = Marker(map)
             driverMarker.position = driver1Loc
-            driverMarker.icon = ContextCompat.getDrawable(this, R.drawable.ic_motorpin)
-            driverMarker.title = "Gustavo"
+
+            if (vehicleType == "Car") {
+                driverMarker.icon = ContextCompat.getDrawable(this, R.drawable.ic_car_pin)
+                driverMarker.title = "Car Driver"
+            } else {
+                driverMarker.icon = ContextCompat.getDrawable(this, R.drawable.ic_motorpin)
+                driverMarker.title = "Motor Driver"
+            }
+
             map.overlays.add(driverMarker)
             map.invalidate()
         }
@@ -611,7 +639,16 @@ class LocationActivity : AppCompatActivity() {
             startMarker = Marker(map)
             startMarker?.setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM)
             startMarker?.setInfoWindow(null)
-            startMarker?.icon = ContextCompat.getDrawable(this, R.drawable.avatar)
+
+
+            val originalDrawable = ContextCompat.getDrawable(this, R.drawable.avatar)
+            if (originalDrawable != null) {
+                val bitmap = (originalDrawable as BitmapDrawable).bitmap
+                val scaledBitmap = Bitmap.createScaledBitmap(bitmap, 36, 36, true)
+                startMarker?.icon = BitmapDrawable(resources, scaledBitmap)
+            }
+
+            startMarker?.title = "Start From"
             map.overlays.add(startMarker)
         }
         startMarker?.position = point
@@ -624,6 +661,7 @@ class LocationActivity : AppCompatActivity() {
             endMarker?.setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM)
             endMarker?.setInfoWindow(null)
             endMarker?.icon = ContextCompat.getDrawable(this, R.drawable.ic_location)
+            endMarker?.title = "Your Dest"
             map.overlays.add(endMarker)
         }
         endMarker?.position = point

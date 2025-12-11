@@ -22,6 +22,14 @@ class HomeActivity : AppCompatActivity() {
         val menuMotor = findViewById<ImageView>(R.id.menuMotor)
         menuMotor.setOnClickListener {
             val intent = Intent(this, LocationActivity::class.java)
+            intent.putExtra("VEHICLE_TYPE", "Motor")
+            startActivity(intent)
+        }
+
+        val menuCar = findViewById<ImageView>(R.id.menuCar)
+        menuCar.setOnClickListener {
+            val intent = Intent(this, LocationActivity::class.java)
+            intent.putExtra("VEHICLE_TYPE", "Car")
             startActivity(intent)
         }
 
