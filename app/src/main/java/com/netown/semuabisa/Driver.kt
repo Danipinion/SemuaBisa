@@ -6,5 +6,6 @@ data class Driver(
     val price: String,
     val time: String,
     val seats: Int,
-    val vehicleType: String
+    val vehicleType: String,
+    val plateNumber: String
 )

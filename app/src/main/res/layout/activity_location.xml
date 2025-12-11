@@ -37,7 +37,7 @@
         android:paddingHorizontal="@dimen/space_lg"
         android:paddingBottom="@dimen/space_xl"
         app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior"
-        app:behavior_peekHeight="90dp"
+        app:behavior_peekHeight="100dp"
         app:behavior_hideable="false">
 
         <LinearLayout
@@ -129,7 +129,7 @@
         android:paddingHorizontal="@dimen/space_lg"
         android:paddingBottom="@dimen/space_xl"
         app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior"
-        app:behavior_peekHeight="0dp"
+        app:behavior_peekHeight="100dp"
         app:behavior_hideable="true">
 
         <View
@@ -175,7 +175,7 @@
         android:paddingHorizontal="@dimen/space_xl"
         android:paddingBottom="@dimen/space_xl"
         app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior"
-        app:behavior_peekHeight="0dp"
+        app:behavior_peekHeight="100dp"
         app:behavior_hideable="true">
 
         <RelativeLayout
@@ -350,7 +350,7 @@
         android:paddingHorizontal="@dimen/space_xl"
         android:paddingBottom="@dimen/space_xl"
         app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior"
-        app:behavior_peekHeight="0dp"
+        app:behavior_peekHeight="100dp"
         app:behavior_hideable="true">
 
         <RelativeLayout
@@ -469,7 +469,7 @@
         android:paddingHorizontal="@dimen/space_xl"
         android:paddingBottom="@dimen/space_xl"
         app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior"
-        app:behavior_peekHeight="0dp"
+        app:behavior_peekHeight="100dp"
         app:behavior_hideable="true">
 
         <View
@@ -528,7 +528,7 @@
         android:paddingHorizontal="@dimen/space_xl"
         android:paddingBottom="@dimen/space_xl"
         app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior"
-        app:behavior_peekHeight="0dp"
+        app:behavior_peekHeight="100dp"
         app:behavior_hideable="true">
 
         <View
@@ -547,6 +547,7 @@
             android:gravity="center_vertical">
 
             <TextView
+                android:id="@+id/tvTrackStatus"
                 style="@style/Typography.H2"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
@@ -554,6 +555,7 @@
                 android:text="Driver Arriving"/>
 
             <TextView
+                android:id="@+id/tvTrackTime"
                 style="@style/Typography.BodyMd"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -668,6 +670,7 @@
                 android:gravity="center"
                 android:orientation="vertical">
                 <TextView
+                    android:id="@+id/tvTrackPlateNumber"
                     style="@style/Typography.H4"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -707,6 +710,7 @@
             android:layout_height="@dimen/button_height"
             android:layout_marginTop="32dp"
             android:backgroundTint="#EF4444"
+            android:textAllCaps="false"
             android:text="Cancel" />
 
     </LinearLayout>

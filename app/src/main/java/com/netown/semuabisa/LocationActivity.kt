@@ -55,12 +55,17 @@ class LocationActivity : AppCompatActivity() {
     private lateinit var etDropoff: AutoCompleteTextView
     private lateinit var btnOrder: MaterialButton
     private lateinit var bottomSheetBehavior: BottomSheetBehavior<LinearLayout>
+
+    // Sheets
     private lateinit var locationSheetBehavior: BottomSheetBehavior<LinearLayout>
     private lateinit var driverSheetBehavior: BottomSheetBehavior<LinearLayout>
     private lateinit var confirmationSheetBehavior: BottomSheetBehavior<LinearLayout>
     private lateinit var paymentSheetBehavior: BottomSheetBehavior<LinearLayout>
     private lateinit var successSheetBehavior: BottomSheetBehavior<LinearLayout>
     private lateinit var trackingSheetBehavior: BottomSheetBehavior<LinearLayout>
+
+    private val allSheets = ArrayList<BottomSheetBehavior<LinearLayout>>()
+
     private var selectedDriver: Driver? = null
     private lateinit var rbCash: RadioButton
 
@@ -124,33 +129,56 @@ class LocationActivity : AppCompatActivity() {
     private fun setupSheets() {
         val locSheet = findViewById<LinearLayout>(R.id.locationBottomSheet)
         locationSheetBehavior = BottomSheetBehavior.from(locSheet)
-        locationSheetBehavior.peekHeight = (90 * resources.displayMetrics.density).toInt()
 
         val drvSheet = findViewById<LinearLayout>(R.id.driverBottomSheet)
         driverSheetBehavior = BottomSheetBehavior.from(drvSheet)
-        driverSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
 
         val confSheet = findViewById<LinearLayout>(R.id.confirmationBottomSheet)
         confirmationSheetBehavior = BottomSheetBehavior.from(confSheet)
-        confirmationSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
 
         val paySheet = findViewById<LinearLayout>(R.id.paymentBottomSheet)
         paymentSheetBehavior = BottomSheetBehavior.from(paySheet)
-        paymentSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
 
         val successSheet = findViewById<LinearLayout>(R.id.successBottomSheet)
         successSheetBehavior = BottomSheetBehavior.from(successSheet)
-        successSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
 
         val trackSheet = findViewById<LinearLayout>(R.id.trackingBottomSheet)
         trackingSheetBehavior = BottomSheetBehavior.from(trackSheet)
-        trackingSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
+
+        // Add all to list for easy management
+        allSheets.add(locationSheetBehavior)
+        allSheets.add(driverSheetBehavior)
+        allSheets.add(confirmationSheetBehavior)
+        allSheets.add(paymentSheetBehavior)
+        allSheets.add(successSheetBehavior)
+        allSheets.add(trackingSheetBehavior)
+
+        // Init State: Show only location sheet
+        transitionToSheet(locationSheetBehavior)
+    }
+
+    /**
+     * Helper to show one sheet and hide others.
+     * Enforces isHideable=false on the active sheet so user cannot drag it away.
+     */
+    private fun transitionToSheet(target: BottomSheetBehavior<LinearLayout>) {
+        allSheets.forEach { sheet ->
+            if (sheet == target) {
+                // Active Sheet: Make it persistent (not hideable by user dragging)
+                sheet.isHideable = false
+                sheet.state = BottomSheetBehavior.STATE_EXPANDED
+            } else {
+                // Inactive Sheets: Hide them
+                sheet.isHideable = true
+                sheet.state = BottomSheetBehavior.STATE_HIDDEN
+            }
+        }
     }
 
     private fun setupDriverList() {
-        driverList.add(Driver("Gustavo Franci", 4.5, "Rp. 15.000", "5 min", 1, "Bike"))
-        driverList.add(Driver("Globallyaass", 4.7, "Rp. 18.000", "7 min", 1, "Bike"))
-        driverList.add(Driver("Madiun Speed", 4.9, "Rp. 14.000", "3 min", 1, "Bike"))
+        driverList.add(Driver("Gustavo Franci", 4.5, "Rp. 15.000", "5 min", 1, "Bike", "B 1234 GFR"))
+        driverList.add(Driver("Globallyaass", 4.7, "Rp. 18.000", "7 min", 1, "Bike", "D 4567 KYT"))
+        driverList.add(Driver("Madiun Speed", 4.9, "Rp. 14.000", "3 min", 1, "Bike", "AE 9988 XX"))
 
         adapterDriver = DriverAdapter(driverList) { driver ->
             selectedDriver = driver
@@ -175,14 +203,12 @@ class LocationActivity : AppCompatActivity() {
         findViewById<TextView>(R.id.tvConfTime).text = driver.time
         findViewById<TextView>(R.id.tvConfSeats).text = "${driver.seats}"
 
-        driverSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
-        confirmationSheetBehavior.state = BottomSheetBehavior.STATE_EXPANDED
+        transitionToSheet(confirmationSheetBehavior)
     }
 
     private fun setupConfirmationLogic() {
         findViewById<ImageButton>(R.id.btnCloseConfirmation).setOnClickListener {
-            confirmationSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
-            driverSheetBehavior.state = BottomSheetBehavior.STATE_EXPANDED
+            transitionToSheet(driverSheetBehavior)
         }
 
         findViewById<MaterialButton>(R.id.btnOrderNow).setOnClickListener {
@@ -190,26 +216,21 @@ class LocationActivity : AppCompatActivity() {
                 Toast.makeText(this, "Kesalahan: Driver tidak terpilih.", Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
-
-            confirmationSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
-            paymentSheetBehavior.state = BottomSheetBehavior.STATE_EXPANDED
-
             rbCash.isChecked = true
+            transitionToSheet(paymentSheetBehavior)
         }
     }
 
     private fun setupPaymentLogic() {
         findViewById<ImageButton>(R.id.btnClosePayment).setOnClickListener {
-            paymentSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
-            confirmationSheetBehavior.state = BottomSheetBehavior.STATE_EXPANDED
+            transitionToSheet(confirmationSheetBehavior)
         }
 
         findViewById<MaterialButton>(R.id.btnContinuePayment).setOnClickListener {
             val rbCash = findViewById<RadioButton>(R.id.rbCash)
 
             if (rbCash.isChecked) {
-                paymentSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
-                successSheetBehavior.state = BottomSheetBehavior.STATE_EXPANDED
+                transitionToSheet(successSheetBehavior)
             } else {
                 Toast.makeText(this, "Hanya metode Cash yang tersedia saat ini", Toast.LENGTH_SHORT).show()
             }
@@ -218,92 +239,143 @@ class LocationActivity : AppCompatActivity() {
 
     private fun setupSuccessLogic() {
         findViewById<MaterialButton>(R.id.btnTrackDriver).setOnClickListener {
-            successSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
             startLiveTracking()
         }
     }
 
     private fun startLiveTracking() {
-        if (startPoint == null) return
+        if (startPoint == null || selectedDriver == null) return
 
-        // 1. Bersihkan Peta (Rute lama & marker lama hapus)
+        findViewById<TextView>(R.id.tvTrackDriverName).text = selectedDriver!!.name
+        findViewById<TextView>(R.id.tvTrackRating).text = "⭐ ${selectedDriver!!.rating}"
+        findViewById<TextView>(R.id.tvTrackPrice).text = selectedDriver!!.price
+        findViewById<TextView>(R.id.tvTrackSeats).text = "${selectedDriver!!.seats} Seats"
+        findViewById<TextView>(R.id.tvTrackVehicle).text = selectedDriver!!.vehicleType
+        findViewById<TextView>(R.id.tvTrackTime).text = selectedDriver!!.time
+        findViewById<TextView>(R.id.tvTrackPlateNumber).text = selectedDriver!!.plateNumber
+
         map.overlays.clear()
-
-        // 2. Pasang Marker User (Posisi Jemput)
         addPickupMarker(startPoint!!)
+        if (endPoint != null) addDropoffMarker(endPoint!!)
 
-        // 3. Simulasi Posisi Driver (Misal: geser dikit dari posisi user)
-        // Kita buat driver seolah-olah ada di koordinat +0.005 derajat dari user
-        driverLocation = GeoPoint(startPoint!!.latitude + 0.005, startPoint!!.longitude + 0.005)
-
-        // 4. Pasang Marker Driver
+        driverLocation = GeoPoint(startPoint!!.latitude + 0.003, startPoint!!.longitude + 0.003)
         addDriverMarker(driverLocation!!)
-
-        // 5. Gambar Rute (Driver -> User)
-        // Kita set endpoint sementara ke posisi driver untuk drawRoute
-        val tempStart = startPoint
-        startPoint = driverLocation // Start rute dari driver
-        endPoint = tempStart        // End rute ke user
-
-        drawRoute() // Gambar garis
-
-        // Kembalikan variabel startPoint ke posisi user agar konsisten
-        startPoint = tempStart
-
-        // 6. Zoom agar kelihatan dua-duanya
         zoomToFitTracking(driverLocation!!, startPoint!!)
 
-        // 7. Buka Sheet Tracking
-        trackingSheetBehavior.state = BottomSheetBehavior.STATE_EXPANDED
+        transitionToSheet(trackingSheetBehavior)
 
-        // Update Data UI Tracking (Isi dengan data selectedDriver)
-        if (selectedDriver != null) {
-            findViewById<TextView>(R.id.tvTrackDriverName).text = selectedDriver!!.name
-            findViewById<TextView>(R.id.tvTrackRating).text = "⭐ ${selectedDriver!!.rating}"
-            findViewById<TextView>(R.id.tvTrackPrice).text = selectedDriver!!.price
-            findViewById<TextView>(R.id.tvTrackSeats).text = "${selectedDriver!!.seats} Seats"
+        CoroutineScope(Dispatchers.Main).launch {
+            findViewById<TextView>(R.id.tvTrackStatus).text = "Driver Arriving"
+            val routeToPickup = fetchRoutePoints(driverLocation!!, startPoint!!)
+            if (routeToPickup.isNotEmpty()) {
+                drawPolyline(routeToPickup, Color.BLUE)
+                animateMarker(driverMarker!!, routeToPickup, 5000)
+            }
+
+            delay(1000)
+
+            if (endPoint != null) {
+                findViewById<TextView>(R.id.tvTrackStatus).text = "On the way"
+                findViewById<TextView>(R.id.tvTrackTime).text = "Arriving soon"
+
+                if(routePolyline != null) map.overlays.remove(routePolyline)
+
+                val routeToDest = fetchRoutePoints(startPoint!!, endPoint!!)
+                if (routeToDest.isNotEmpty()) {
+                    drawPolyline(routeToDest, Color.GREEN)
+                    zoomToFitTracking(startPoint!!, endPoint!!)
+                    animateMarker(driverMarker!!, routeToDest, 5000)
+                }
+
+                findViewById<TextView>(R.id.tvTrackStatus).text = "Arrived"
+                Toast.makeText(this@LocationActivity, "You have arrived!", Toast.LENGTH_LONG).show()
+            }
         }
     }
 
+    private suspend fun animateMarker(marker: Marker, points: ArrayList<GeoPoint>, durationMs: Long) {
+        val interval = 20L
+        val steps = (durationMs / interval).toInt()
+        val pointsCount = points.size
+
+        for (i in 0..steps) {
+            val progress = i.toFloat() / steps
+            val currentIndex = (progress * (pointsCount - 1)).toInt()
+            if (currentIndex < points.size) {
+                marker.position = points[currentIndex]
+                map.invalidate()
+            }
+            delay(interval)
+        }
+        marker.position = points.last()
+        map.invalidate()
+    }
+
+    private suspend fun fetchRoutePoints(start: GeoPoint, end: GeoPoint): ArrayList<GeoPoint> {
+        return withContext(Dispatchers.IO) {
+            val poly = ArrayList<GeoPoint>()
+            try {
+                val routeUrl =
+                    "https://router.project-osrm.org/route/v1/driving/${start.longitude},${start.latitude};${end.longitude},${end.latitude}?overview=full&geometries=polyline"
+                val url = URL(routeUrl)
+                val connection = url.openConnection() as HttpURLConnection
+                connection.requestMethod = "GET"
+                if (connection.responseCode == HttpURLConnection.HTTP_OK) {
+                    val response = connection.inputStream.bufferedReader().use { it.readText() }
+                    val jsonResponse = JSONObject(response)
+                    val routes = jsonResponse.getJSONArray("routes")
+                    if (routes.length() > 0) {
+                        val polylineString = routes.getJSONObject(0).getString("geometry")
+                        poly.addAll(decodePolyline(polylineString))
+                    }
+                }
+            } catch (e: Exception) {
+                e.printStackTrace()
+                poly.add(start)
+                poly.add(end)
+            }
+            poly
+        }
+    }
+
+    private fun drawPolyline(points: ArrayList<GeoPoint>, color: Int) {
+        if (routePolyline != null) map.overlays.remove(routePolyline)
+        routePolyline = Polyline(map)
+        routePolyline?.setPoints(points)
+        routePolyline?.outlinePaint?.color = color
+        routePolyline?.outlinePaint?.strokeWidth = 15f
+        map.overlays.add(0, routePolyline)
+        map.invalidate()
+    }
+
     private fun addDriverMarker(point: GeoPoint) {
-        // Buat Marker khusus Driver
         driverMarker = Marker(map)
         driverMarker?.position = point
         driverMarker?.setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM)
-
-        // Ganti icon ini dengan foto/icon mobil jika ada
-        driverMarker?.icon = ContextCompat.getDrawable(this, R.drawable.ic_launcher_foreground)
-        driverMarker?.title = "Driver sedang menuju lokasi"
-
+        driverMarker?.icon = ContextCompat.getDrawable(this, R.drawable.ic_motorpin)
+        driverMarker?.title = "Driver"
         map.overlays.add(driverMarker)
         map.invalidate()
     }
 
-    private fun zoomToFitTracking(driver: GeoPoint, user: GeoPoint) {
+    private fun zoomToFitTracking(p1: GeoPoint, p2: GeoPoint) {
         val boundingBox = BoundingBox(
-            maxOf(driver.latitude, user.latitude),
-            maxOf(driver.longitude, user.longitude),
-            minOf(driver.latitude, user.latitude),
-            minOf(driver.longitude, user.longitude)
+            maxOf(p1.latitude, p2.latitude),
+            maxOf(p1.longitude, p2.longitude),
+            minOf(p1.latitude, p2.latitude),
+            minOf(p1.longitude, p2.longitude)
         )
-        map.zoomToBoundingBox(boundingBox, true, 150) // Padding lebih besar biar lega
+        map.zoomToBoundingBox(boundingBox, true, 150)
     }
 
     private fun setupTrackingLogic() {
-        // Tombol Cancel
         findViewById<MaterialButton>(R.id.btnCancelTrip).setOnClickListener {
-            // Logika Cancel: Reset semua ke awal
-            trackingSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
+            // Reset to initial state
             map.overlays.clear()
             map.invalidate()
-
-            // Buka lagi input lokasi (Reset Flow)
-            locationSheetBehavior.state = BottomSheetBehavior.STATE_COLLAPSED
-
+            transitionToSheet(locationSheetBehavior)
             Toast.makeText(this, "Perjalanan dibatalkan", Toast.LENGTH_SHORT).show()
         }
-
-        // Tombol Chat & Call (Dummy)
         findViewById<ImageButton>(R.id.btnChat).setOnClickListener {
             Toast.makeText(this, "Membuka Chat...", Toast.LENGTH_SHORT).show()
         }
@@ -318,27 +390,22 @@ class LocationActivity : AppCompatActivity() {
 
         etDropoff.setOnItemClickListener { parent, _, position, _ ->
             val selectedPlace = parent.getItemAtPosition(position) as PlaceSuggestion
-
             hideKeyboard()
             etDropoff.setText(selectedPlace.displayName)
             etDropoff.dismissDropDown()
-
             endPoint = GeoPoint(selectedPlace.lat, selectedPlace.lon)
             processSelectedLocation()
         }
 
         etDropoff.addTextChangedListener(object : TextWatcher {
             private var searchJob: Job? = null
-
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
                 searchJob?.cancel()
             }
-
             override fun afterTextChanged(s: Editable?) {
                 val query = s.toString()
                 if (query.length < 3) return
-
                 searchJob = CoroutineScope(Dispatchers.IO).launch {
                     delay(400)
                     fetchSuggestions(query)
@@ -351,40 +418,32 @@ class LocationActivity : AppCompatActivity() {
         val encodedQuery = URLEncoder.encode(query, "UTF-8")
         var urlString =
             "https://nominatim.openstreetmap.org/search?q=$encodedQuery&format=json&limit=5&addressdetails=1"
-
         if (cityBoundingBox != null) {
             val viewBoxStr =
                 "${cityBoundingBox!!.lonWest},${cityBoundingBox!!.latNorth},${cityBoundingBox!!.lonEast},${cityBoundingBox!!.latSouth}"
             urlString += "&viewbox=$viewBoxStr&bounded=1"
         }
-
         try {
             val url = URL(urlString)
             val connection = url.openConnection() as HttpURLConnection
             connection.setRequestProperty("User-Agent", "SemuaBisaApp/1.0")
             connection.requestMethod = "GET"
-
             if (connection.responseCode == HttpURLConnection.HTTP_OK) {
                 val response = connection.inputStream.bufferedReader().use { it.readText() }
                 if (response.trim().isEmpty() || response == "[]") return
-
                 val jsonArray = JSONArray(response)
                 val newSuggestions = ArrayList<PlaceSuggestion>()
-
                 for (i in 0 until jsonArray.length()) {
                     val obj = jsonArray.getJSONObject(i)
                     val name = obj.getString("display_name")
                     val lat = obj.getDouble("lat")
                     val lon = obj.getDouble("lon")
-
                     newSuggestions.add(PlaceSuggestion(name, lat, lon))
                 }
-
                 withContext(Dispatchers.Main) {
                     suggestionAdapter.clear()
                     suggestionAdapter.addAll(newSuggestions)
                     suggestionAdapter.notifyDataSetChanged()
-
                     etDropoff.showDropDown()
                 }
             }
@@ -398,13 +457,8 @@ class LocationActivity : AppCompatActivity() {
             drawRoute()
             addDropoffMarker(endPoint!!)
             zoomToFitMarkers()
-
-            locationSheetBehavior.isHideable = true
-            locationSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
-
-            driverSheetBehavior.state = BottomSheetBehavior.STATE_EXPANDED
-
             showDummyDriversOnMap()
+            transitionToSheet(driverSheetBehavior)
         }
     }
 
@@ -427,10 +481,8 @@ class LocationActivity : AppCompatActivity() {
     }
 
     private fun setupBottomSheet() {
-        val bottomSheetLayout = findViewById<LinearLayout>(R.id.locationBottomSheet)
-        bottomSheetBehavior = BottomSheetBehavior.from(bottomSheetLayout)
-        bottomSheetBehavior.peekHeight = (90 * resources.displayMetrics.density).toInt()
-        bottomSheetBehavior.state = BottomSheetBehavior.STATE_COLLAPSED
+        // Redundant call, logic moved to setupSheets() and called in onCreate.
+        // Keeping empty or removing content to avoid conflict with initViews variables.
     }
 
     private fun getCurrentLocation() {
@@ -565,32 +617,10 @@ class LocationActivity : AppCompatActivity() {
     private fun drawRoute() {
         clearRoute()
         if (startPoint == null || endPoint == null) return
-        CoroutineScope(Dispatchers.IO).launch {
-            try {
-                val routeUrl =
-                    "https://router.project-osrm.org/route/v1/driving/${startPoint!!.longitude},${startPoint!!.latitude};${endPoint!!.longitude},${endPoint!!.latitude}?overview=full&geometries=polyline"
-                val url = URL(routeUrl)
-                val connection = url.openConnection() as HttpURLConnection
-                connection.requestMethod = "GET"
-                if (connection.responseCode == HttpURLConnection.HTTP_OK) {
-                    val response = connection.inputStream.bufferedReader().use { it.readText() }
-                    val jsonResponse = JSONObject(response)
-                    val routes = jsonResponse.getJSONArray("routes")
-                    if (routes.length() > 0) {
-                        val polylineString = routes.getJSONObject(0).getString("geometry")
-                        val routePoints = decodePolyline(polylineString)
-                        withContext(Dispatchers.Main) {
-                            routePolyline = Polyline(map)
-                            routePolyline?.setPoints(routePoints)
-                            routePolyline?.outlinePaint?.color = android.graphics.Color.BLUE
-                            routePolyline?.outlinePaint?.strokeWidth = 15f
-                            map.overlays.add(routePolyline)
-                            map.invalidate()
-                        }
-                    }
-                }
-            } catch (e: Exception) {
-                e.printStackTrace()
+        CoroutineScope(Dispatchers.Main).launch {
+            val routePoints = fetchRoutePoints(startPoint!!, endPoint!!)
+            if (routePoints.isNotEmpty()) {
+                drawPolyline(routePoints, Color.BLUE)
             }
         }
     }
