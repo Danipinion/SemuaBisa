@@ -1,15 +1,20 @@
 package com.netown.semuabisa
 
-import android.content.Intent
 import android.os.Bundle
 import android.widget.ImageView
+import android.widget.LinearLayout
+import android.widget.TextView
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
-import com.netown.semuabisa.features.train.TrainActivity
+import androidx.fragment.app.Fragment
+import com.netown.semuabisa.features.history.HistoryRecentFragment
+import com.netown.semuabisa.features.home.HomeFragment
 
 class HomeActivity : AppCompatActivity() {
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
@@ -20,24 +25,68 @@ class HomeActivity : AppCompatActivity() {
             insets
         }
 
-        val menuMotor = findViewById<ImageView>(R.id.menuMotor)
-        menuMotor.setOnClickListener {
-            val intent = Intent(this, LocationActivity::class.java)
-            intent.putExtra("VEHICLE_TYPE", "Motor")
-            startActivity(intent)
+        // Initialize with Home Fragment
+        if (savedInstanceState == null) {
+            loadFragment(HomeFragment())
+            updateBottomNav(isHome = true)
         }
 
-        val menuCar = findViewById<ImageView>(R.id.menuCar)
-        menuCar.setOnClickListener {
-            val intent = Intent(this, LocationActivity::class.java)
-            intent.putExtra("VEHICLE_TYPE", "Car")
-            startActivity(intent)
+        setupBottomNavigation()
+    }
+
+    private fun setupBottomNavigation() {
+        val navHome = findViewById<LinearLayout>(R.id.navHome)
+        val navHistory = findViewById<LinearLayout>(R.id.navHistory)
+        val navQfd = findViewById<LinearLayout>(R.id.navQfd)
+        val navMessage = findViewById<LinearLayout>(R.id.navMessage)
+        val navProfile = findViewById<LinearLayout>(R.id.navProfile)
+
+        navHome.setOnClickListener {
+            loadFragment(HomeFragment())
+            updateBottomNav(isHome = true)
         }
 
-        val menuTrain = findViewById<ImageView>(R.id.menuTrain)
-        menuTrain.setOnClickListener {
-            val intent = Intent(this, TrainActivity::class.java)
-            startActivity(intent)
+        navHistory.setOnClickListener {
+            loadFragment(HistoryRecentFragment())
+            updateBottomNav(isHome = false)
+        }
+
+        navMessage.setOnClickListener {
+            loadFragment(HistoryRecentFragment())
+        }
+
+        navProfile.setOnClickListener {
+            loadFragment(HistoryRecentFragment())
+        }
+    }
+
+    private fun loadFragment(fragment: Fragment) {
+        supportFragmentManager.beginTransaction()
+            .replace(R.id.fragmentContainer, fragment)
+            .commit()
+    }
+
+    private fun updateBottomNav(isHome: Boolean) {
+        val ivHome = findViewById<ImageView>(R.id.ivNavHome)
+        val tvHome = findViewById<TextView>(R.id.tvNavHome)
+        val ivHistory = findViewById<ImageView>(R.id.ivNavHistory)
+        val tvHistory = findViewById<TextView>(R.id.tvNavHistory)
+
+        val activeColor = ContextCompat.getColor(this, R.color.primary_500)
+        val inactiveColor = ContextCompat.getColor(this, R.color.neutral_text_disabled)
+
+        if (isHome) {
+            ivHome.setColorFilter(activeColor)
+            tvHome.setTextColor(activeColor)
+
+            ivHistory.setColorFilter(inactiveColor)
+            tvHistory.setTextColor(inactiveColor)
+        } else {
+            ivHome.setColorFilter(inactiveColor)
+            tvHome.setTextColor(inactiveColor)
+
+            ivHistory.setColorFilter(activeColor)
+            tvHistory.setTextColor(activeColor)
         }
     }
 }
