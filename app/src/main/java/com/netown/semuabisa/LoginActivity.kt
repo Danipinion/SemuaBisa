@@ -21,6 +21,8 @@ class LoginActivity : AppCompatActivity() {
             val username = inputUsername.editText?.text.toString()
             if (username.isNotEmpty()) {
                 Toast.makeText(this, "Login clicked for $username", Toast.LENGTH_SHORT).show()
+                val intent = Intent(this, HomeActivity::class.java)
+                startActivity(intent)
             } else {
                 inputUsername.error = "Username tidak boleh kosong"
             }

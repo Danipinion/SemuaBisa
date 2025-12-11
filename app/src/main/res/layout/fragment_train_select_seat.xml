@@ -13,7 +13,7 @@
         android:paddingHorizontal="16dp"
         android:background="@android:color/white">
 
-        <ImageView
+        <ImageButton
             android:src="@drawable/outline_arrow_back_24"
             android:layout_width="24dp"
             android:layout_height="24dp"

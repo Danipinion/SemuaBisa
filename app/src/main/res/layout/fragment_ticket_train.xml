@@ -19,6 +19,12 @@
             android:paddingHorizontal="10dp"
             android:background="@android:color/white">
 
+            <ImageButton
+                android:id="@+id/btnBack"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:src="@drawable/outline_arrow_back_24"/>
+
             <TextView
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
