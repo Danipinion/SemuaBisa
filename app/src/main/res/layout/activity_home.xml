@@ -11,7 +11,7 @@
     <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginBottom="80dp"
+        android:layout_marginBottom="70dp"
         android:fillViewport="true">
 
         <androidx.constraintlayout.widget.ConstraintLayout
@@ -180,10 +180,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom"
-        android:backgroundTint="@color/white"
-        app:fabCradleMargin="10dp"
-        app:fabCradleRoundedCornerRadius="20dp"
-        app:fabCradleVerticalOffset="10dp">
+        android:backgroundTint="@color/white">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -197,8 +194,17 @@
                 android:layout_weight="1"
                 android:gravity="center"
                 android:orientation="vertical">
-                <ImageView android:layout_width="24dp" android:layout_height="24dp" android:src="@drawable/ic_home_active" app:tint="@color/primary_500"/>
-                <TextView android:text="Home" style="@style/Typography.Caption" android:layout_width="wrap_content" android:layout_height="wrap_content" android:textColor="@color/primary_500"/>
+                <ImageView
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:src="@drawable/ic_home_active"
+                    app:tint="@color/primary_500"/>
+                <TextView
+                    android:text="Home"
+                    style="@style/Typography.Caption"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/primary_500"/>
             </LinearLayout>
 
             <LinearLayout
@@ -207,20 +213,16 @@
                 android:layout_weight="1"
                 android:gravity="center"
                 android:orientation="vertical">
-                <ImageView android:layout_width="24dp" android:layout_height="24dp" android:src="@drawable/ic_history_booking" app:tint="@color/neutral_text_disabled"/>
-                <TextView android:text="Booking" style="@style/Typography.Caption" android:layout_width="wrap_content" android:layout_height="wrap_content"/>
-            </LinearLayout>
-
-            <View android:layout_width="0dp" android:layout_height="0dp" android:layout_weight="1"/>
-
-            <LinearLayout
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:gravity="center"
-                android:orientation="vertical">
-                <ImageView android:layout_width="24dp" android:layout_height="24dp" android:src="@drawable/ic_message" app:tint="@color/neutral_text_disabled"/>
-                <TextView android:text="Message" style="@style/Typography.Caption" android:layout_width="wrap_content" android:layout_height="wrap_content"/>
+                <ImageView
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:src="@drawable/ic_history_booking"
+                    app:tint="@color/neutral_text_disabled"/>
+                <TextView
+                    android:text="History"
+                    style="@style/Typography.Caption"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"/>
             </LinearLayout>
 
             <LinearLayout
@@ -229,22 +231,55 @@
                 android:layout_weight="1"
                 android:gravity="center"
                 android:orientation="vertical">
-                <ImageView android:layout_width="24dp" android:layout_height="24dp" android:src="@drawable/ic_profile" app:tint="@color/neutral_text_disabled"/>
-                <TextView android:text="Profile" style="@style/Typography.Caption" android:layout_width="wrap_content" android:layout_height="wrap_content"/>
+                <ImageView
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:src="@drawable/ic_location"
+                    app:tint="@color/neutral_text_disabled"/>
+                <TextView
+                    android:text="QFD"
+                    style="@style/Typography.Caption"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"/>
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:orientation="vertical">
+                <ImageView
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:src="@drawable/ic_message"
+                    app:tint="@color/neutral_text_disabled"/>
+                <TextView
+                    android:text="Message"
+                    style="@style/Typography.Caption"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"/>
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:orientation="vertical">
+                <ImageView
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:src="@drawable/ic_profile"
+                    app:tint="@color/neutral_text_disabled"/>
+                <TextView
+                    android:text="Profile"
+                    style="@style/Typography.Caption"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"/>
             </LinearLayout>
 
         </LinearLayout>
     </com.google.android.material.bottomappbar.BottomAppBar>
-
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/fab"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:src="@drawable/ic_location"
-        app:backgroundTint="@color/primary_500"
-        app:tint="@color/white"
-        app:layout_anchor="@id/bottomAppBar"
-        app:maxImageSize="32dp"
-        android:contentDescription="Open Map" />
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>
