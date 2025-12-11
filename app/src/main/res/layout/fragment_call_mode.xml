@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:gravity="center_horizontal"
+    android:padding="24dp"
+    android:background="@color/white">
+
+    <!-- Profile Image -->
+    <ImageView
+        android:id="@+id/imgProfile"
+        android:layout_width="120dp"
+        android:layout_height="120dp"
+        android:layout_marginTop="40dp"
+        android:src="@drawable/avatar_profile"
+        android:scaleType="centerCrop"
+        android:background="@drawable/circle_white"
+        android:padding="2dp" />
+
+    <!-- Name -->
+    <TextView
+        android:id="@+id/tvName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Gostavo Franci"
+        android:textSize="20sp"
+        android:textColor="@color/black"
+        android:layout_marginTop="12dp"
+        android:textStyle="bold" />
+
+    <!-- Timer -->
+    <TextView
+        android:id="@+id/tvTimer"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="10:12"
+        android:textSize="14sp"
+        android:textColor="#3B82F6"
+        android:layout_marginTop="4dp" />
+
+    <!-- Control Buttons -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center"
+        android:layout_marginTop="220dp">
+
+        <!-- Speaker -->
+        <LinearLayout
+            android:id="@+id/btnSpeaker"
+            android:layout_width="70dp"
+            android:layout_height="70dp"
+            android:gravity="center"
+            android:layout_marginHorizontal="12dp"
+            android:background="@drawable/call_ellipse_3">
+
+            <ImageView
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:src="@drawable/call_speaker" />
+        </LinearLayout>
+
+        <!-- Mute -->
+
+        <!-- Notes / Chat -->
+        <LinearLayout
+            android:id="@+id/btnMute"
+            android:layout_width="70dp"
+            android:layout_height="70dp"
+            android:layout_marginHorizontal="12dp"
+            android:background="@drawable/call_eclipse_5"
+            android:gravity="center">
+
+            <ImageView
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:src="@drawable/call_mute" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/btnNotes"
+            android:layout_width="70dp"
+            android:layout_height="70dp"
+            android:gravity="center"
+            android:layout_marginHorizontal="12dp"
+            android:background="@drawable/call_eclipse_5">
+
+            <ImageView
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:src="@drawable/call_message" />
+        </LinearLayout>
+    </LinearLayout>
+
+    <!-- End Call Button -->
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/btnEndCall"
+        android:layout_width="match_parent"
+        android:layout_height="55dp"
+        android:layout_marginTop="50dp"
+        android:text="End"
+        android:textSize="16sp"
+        android:textColor="@color/white"
+        android:background="@drawable/red_button_bg" />
+
+</LinearLayout>

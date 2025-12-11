@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:background="@android:color/white"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <!-- HEADER -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="70dp"
+        android:gravity="center_vertical"
+        android:paddingHorizontal="16dp">
+
+        <!-- Back -->
+        <ImageView
+            android:id="@+id/btnBack"
+            android:src="@drawable/outline_arrow_back_24"
+            android:layout_width="24dp"
+            android:layout_height="24dp" />
+
+        <!-- Avatar -->
+        <ImageView
+            android:id="@+id/imgAvatar"
+            android:layout_width="45dp"
+            android:layout_height="45dp"
+            android:src="@drawable/avatar_profile"
+            android:layout_marginStart="16dp"
+            android:background="@drawable/circle_white" />
+
+        <!-- Name + Status -->
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:orientation="vertical"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="12dp">
+
+            <TextView
+                android:id="@+id/txtName"
+                android:text="Gostavo Franci"
+                android:textStyle="bold"
+                android:textSize="16sp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
+
+            <TextView
+                android:id="@+id/txtStatus"
+                android:text="Active Order • End Location …"
+                android:textSize="13sp"
+                android:textColor="#3B82F6"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
+        </LinearLayout>
+
+        <ImageView
+            android:id="@+id/btnCall"
+            android:src="@drawable/chat_phone_bold"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_marginEnd="16dp"/>
+
+    </LinearLayout>
+
+    <!-- CHAT LIST -->
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recyclerChat"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:padding="12dp" />
+
+    <!-- QUICK REPLIES -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:paddingHorizontal="12dp"
+        android:paddingTop="8dp">
+
+        <TextView
+            android:id="@+id/btnQuick1"
+            android:layout_width="0dp"
+            android:layout_height="40dp"
+            android:layout_weight="1"
+            android:text="Lorem ipsum dolar 😅"
+            android:gravity="center"
+            android:background="@drawable/bg_quick_reply"
+            android:textColor="#1E3A8A"
+            android:textSize="14sp"
+            android:paddingHorizontal="12dp"/>
+
+        <TextView
+            android:id="@+id/btnQuick2"
+            android:layout_width="0dp"
+            android:layout_height="40dp"
+            android:layout_weight="1"
+            android:text="Lorem ipsum dolar 🤭"
+            android:gravity="center"
+            android:background="@drawable/bg_quick_reply"
+            android:textColor="#1E3A8A"
+            android:textSize="14sp"
+            android:layout_marginStart="10dp"
+            android:paddingHorizontal="12dp"/>
+    </LinearLayout>
+
+
+
+    <!-- MESSAGE INPUT AREA -->
+    <LinearLayout
+        android:padding="12dp"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <!-- TEXT INPUT -->
+        <EditText
+            android:id="@+id/edtMessage"
+            android:hint="Message..."
+            android:paddingHorizontal="16dp"
+            android:paddingVertical="12dp"
+            android:background="@drawable/bg_message_input"
+            android:textSize="15sp"
+            android:layout_width="0dp"
+            android:layout_height="48dp"
+            android:inputType="text"
+            android:layout_weight="1"/>
+
+        <!-- SEND BUTTON -->
+        <ImageView
+            android:id="@+id/btnSend"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:src="@drawable/chat_send_rounded"
+            android:layout_marginStart="10dp"/>
+    </LinearLayout>
+
+</LinearLayout>
