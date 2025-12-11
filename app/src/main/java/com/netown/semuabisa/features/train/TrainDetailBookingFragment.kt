@@ -12,7 +12,7 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import com.netown.semuabisa.R
-import com.netown.semuabisa.TrainActivity
+import com.netown.semuabisa.features.train.TrainActivity
 import java.util.Calendar
 
 class TrainDetailBookingFragment : Fragment() {

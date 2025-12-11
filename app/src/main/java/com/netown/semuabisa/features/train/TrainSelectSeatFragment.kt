@@ -11,7 +11,7 @@ import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.netown.semuabisa.R
-import com.netown.semuabisa.TrainActivity
+import com.netown.semuabisa.features.train.TrainActivity
 
 class TrainSelectSeatFragment : Fragment(R.layout.fragment_train_select_seat) {
 

@@ -17,10 +17,7 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.SemuaBisa">
         <activity
-            android:name=".TrackingSimulationActivity"
-            android:exported="false" />
-        <activity
-            android:name=".TrainActivity"
+            android:name=".features.train.TrainActivity"
             android:exported="false" />
         <activity
             android:name=".LocationActivity"

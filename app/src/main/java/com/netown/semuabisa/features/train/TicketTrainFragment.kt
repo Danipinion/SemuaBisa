@@ -7,7 +7,7 @@ import android.widget.ImageButton
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import com.netown.semuabisa.R
-import com.netown.semuabisa.TrainActivity
+import com.netown.semuabisa.features.train.TrainActivity
 
 class TicketTrainFragment : Fragment(R.layout.fragment_ticket_train) {
 

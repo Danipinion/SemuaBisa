@@ -1,9 +1,9 @@
-package com.netown.semuabisa
+package com.netown.semuabisa.features.train
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
-import com.netown.semuabisa.features.train.*
+import com.netown.semuabisa.R
 
 class TrainActivity : AppCompatActivity() {
 
