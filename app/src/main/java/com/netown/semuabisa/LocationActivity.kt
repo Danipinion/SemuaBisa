@@ -45,7 +45,11 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import android.graphics.Color
 import android.widget.RadioButton
+import android.widget.RatingBar
 import android.widget.TextView
+import android.app.Dialog
+import android.graphics.drawable.ColorDrawable
+import android.view.Window
 
 
 class LocationActivity : AppCompatActivity() {
@@ -54,7 +58,6 @@ class LocationActivity : AppCompatActivity() {
     private lateinit var etPickup: EditText
     private lateinit var etDropoff: AutoCompleteTextView
     private lateinit var btnOrder: MaterialButton
-    private lateinit var bottomSheetBehavior: BottomSheetBehavior<LinearLayout>
 
     // Sheets
     private lateinit var locationSheetBehavior: BottomSheetBehavior<LinearLayout>
@@ -63,6 +66,8 @@ class LocationActivity : AppCompatActivity() {
     private lateinit var paymentSheetBehavior: BottomSheetBehavior<LinearLayout>
     private lateinit var successSheetBehavior: BottomSheetBehavior<LinearLayout>
     private lateinit var trackingSheetBehavior: BottomSheetBehavior<LinearLayout>
+    private lateinit var arrivedSheetBehavior: BottomSheetBehavior<LinearLayout>
+    private lateinit var reviewSheetBehavior: BottomSheetBehavior<LinearLayout>
 
     private val allSheets = ArrayList<BottomSheetBehavior<LinearLayout>>()
 
@@ -81,14 +86,11 @@ class LocationActivity : AppCompatActivity() {
     private lateinit var rvDrivers: RecyclerView
     private lateinit var adapterDriver: DriverAdapter
     private val driverList = ArrayList<Driver>()
+    private lateinit var suggestionAdapter: ArrayAdapter<PlaceSuggestion>
 
     data class PlaceSuggestion(val displayName: String, val lat: Double, val lon: Double) {
-        override fun toString(): String {
-            return displayName
-        }
+        override fun toString(): String = displayName
     }
-
-    private lateinit var suggestionAdapter: ArrayAdapter<PlaceSuggestion>
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -99,7 +101,6 @@ class LocationActivity : AppCompatActivity() {
         initViews()
         setupSheets()
         setupMap()
-        setupBottomSheet()
         getCurrentLocation()
         setupAutocomplete()
         setupSearchListeners()
@@ -108,6 +109,8 @@ class LocationActivity : AppCompatActivity() {
         setupPaymentLogic()
         setupSuccessLogic()
         setupTrackingLogic()
+        setupArrivedLogic()
+        setupReviewLogic()
     }
 
     private fun initViews() {
@@ -119,56 +122,39 @@ class LocationActivity : AppCompatActivity() {
         rbCash = findViewById(R.id.rbCash)
 
         findViewById<ImageButton>(R.id.btnBack).setOnClickListener { finish() }
-        findViewById<MaterialButton>(R.id.btnOrder).setOnClickListener {
-            if (etDropoff.text.isNotEmpty()) {
-                searchLocation(etDropoff.text.toString())
-            }
-        }
     }
 
     private fun setupSheets() {
-        val locSheet = findViewById<LinearLayout>(R.id.locationBottomSheet)
-        locationSheetBehavior = BottomSheetBehavior.from(locSheet)
+        locationSheetBehavior = BottomSheetBehavior.from(findViewById(R.id.locationBottomSheet))
+        driverSheetBehavior = BottomSheetBehavior.from(findViewById(R.id.driverBottomSheet))
+        confirmationSheetBehavior = BottomSheetBehavior.from(findViewById(R.id.confirmationBottomSheet))
+        paymentSheetBehavior = BottomSheetBehavior.from(findViewById(R.id.paymentBottomSheet))
+        successSheetBehavior = BottomSheetBehavior.from(findViewById(R.id.successBottomSheet))
+        trackingSheetBehavior = BottomSheetBehavior.from(findViewById(R.id.trackingBottomSheet))
+        reviewSheetBehavior = BottomSheetBehavior.from(findViewById(R.id.reviewBottomSheet))
 
-        val drvSheet = findViewById<LinearLayout>(R.id.driverBottomSheet)
-        driverSheetBehavior = BottomSheetBehavior.from(drvSheet)
+        arrivedSheetBehavior = BottomSheetBehavior.from(findViewById(R.id.arrivedBottomSheet))
 
-        val confSheet = findViewById<LinearLayout>(R.id.confirmationBottomSheet)
-        confirmationSheetBehavior = BottomSheetBehavior.from(confSheet)
+        allSheets.apply {
+            add(locationSheetBehavior)
+            add(driverSheetBehavior)
+            add(confirmationSheetBehavior)
+            add(paymentSheetBehavior)
+            add(successSheetBehavior)
+            add(trackingSheetBehavior)
+            add(arrivedSheetBehavior)
+            add(reviewSheetBehavior)
+        }
 
-        val paySheet = findViewById<LinearLayout>(R.id.paymentBottomSheet)
-        paymentSheetBehavior = BottomSheetBehavior.from(paySheet)
-
-        val successSheet = findViewById<LinearLayout>(R.id.successBottomSheet)
-        successSheetBehavior = BottomSheetBehavior.from(successSheet)
-
-        val trackSheet = findViewById<LinearLayout>(R.id.trackingBottomSheet)
-        trackingSheetBehavior = BottomSheetBehavior.from(trackSheet)
-
-        // Add all to list for easy management
-        allSheets.add(locationSheetBehavior)
-        allSheets.add(driverSheetBehavior)
-        allSheets.add(confirmationSheetBehavior)
-        allSheets.add(paymentSheetBehavior)
-        allSheets.add(successSheetBehavior)
-        allSheets.add(trackingSheetBehavior)
-
-        // Init State: Show only location sheet
         transitionToSheet(locationSheetBehavior)
     }
 
-    /**
-     * Helper to show one sheet and hide others.
-     * Enforces isHideable=false on the active sheet so user cannot drag it away.
-     */
     private fun transitionToSheet(target: BottomSheetBehavior<LinearLayout>) {
         allSheets.forEach { sheet ->
             if (sheet == target) {
-                // Active Sheet: Make it persistent (not hideable by user dragging)
                 sheet.isHideable = false
                 sheet.state = BottomSheetBehavior.STATE_EXPANDED
             } else {
-                // Inactive Sheets: Hide them
                 sheet.isHideable = true
                 sheet.state = BottomSheetBehavior.STATE_HIDDEN
             }
@@ -202,7 +188,6 @@ class LocationActivity : AppCompatActivity() {
         findViewById<TextView>(R.id.tvConfPrice).text = driver.price
         findViewById<TextView>(R.id.tvConfTime).text = driver.time
         findViewById<TextView>(R.id.tvConfSeats).text = "${driver.seats}"
-
         transitionToSheet(confirmationSheetBehavior)
     }
 
@@ -210,7 +195,6 @@ class LocationActivity : AppCompatActivity() {
         findViewById<ImageButton>(R.id.btnCloseConfirmation).setOnClickListener {
             transitionToSheet(driverSheetBehavior)
         }
-
         findViewById<MaterialButton>(R.id.btnOrderNow).setOnClickListener {
             if (selectedDriver == null) {
                 Toast.makeText(this, "Kesalahan: Driver tidak terpilih.", Toast.LENGTH_SHORT).show()
@@ -225,11 +209,8 @@ class LocationActivity : AppCompatActivity() {
         findViewById<ImageButton>(R.id.btnClosePayment).setOnClickListener {
             transitionToSheet(confirmationSheetBehavior)
         }
-
         findViewById<MaterialButton>(R.id.btnContinuePayment).setOnClickListener {
-            val rbCash = findViewById<RadioButton>(R.id.rbCash)
-
-            if (rbCash.isChecked) {
+            if (findViewById<RadioButton>(R.id.rbCash).isChecked) {
                 transitionToSheet(successSheetBehavior)
             } else {
                 Toast.makeText(this, "Hanya metode Cash yang tersedia saat ini", Toast.LENGTH_SHORT).show()
@@ -243,9 +224,44 @@ class LocationActivity : AppCompatActivity() {
         }
     }
 
+    private fun setupArrivedLogic() {
+        findViewById<MaterialButton>(R.id.btnFinishTrip).setOnClickListener {
+            finish()
+        }
+        findViewById<MaterialButton>(R.id.btnReviewTrip).setOnClickListener {
+            if(selectedDriver != null) {
+                findViewById<TextView>(R.id.tvReviewDriverName).text = selectedDriver!!.name
+                findViewById<TextView>(R.id.tvReviewPlate).text = selectedDriver!!.plateNumber
+            }
+            transitionToSheet(reviewSheetBehavior)
+        }
+    }
+
+    private fun setupReviewLogic() {
+        val ratingBar = findViewById<RatingBar>(R.id.ratingBar)
+        val etComment = findViewById<EditText>(R.id.etReviewComment)
+
+        findViewById<MaterialButton>(R.id.btnSubmitReview).setOnClickListener {
+            val rating = ratingBar.rating
+            val comment = etComment.text.toString()
+
+            if (rating == 0f) {
+                Toast.makeText(this, "Please give a rating first", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
+
+            // Here you would send data to API
+            Toast.makeText(this, "Thank you for your review!", Toast.LENGTH_SHORT).show()
+
+            // Finish activity and return to Home
+            finish()
+        }
+    }
+
     private fun startLiveTracking() {
         if (startPoint == null || selectedDriver == null) return
 
+        // Set Tracking Sheet Data
         findViewById<TextView>(R.id.tvTrackDriverName).text = selectedDriver!!.name
         findViewById<TextView>(R.id.tvTrackRating).text = "⭐ ${selectedDriver!!.rating}"
         findViewById<TextView>(R.id.tvTrackPrice).text = selectedDriver!!.price
@@ -258,6 +274,7 @@ class LocationActivity : AppCompatActivity() {
         addPickupMarker(startPoint!!)
         if (endPoint != null) addDropoffMarker(endPoint!!)
 
+        // Driver starts slightly away
         driverLocation = GeoPoint(startPoint!!.latitude + 0.003, startPoint!!.longitude + 0.003)
         addDriverMarker(driverLocation!!)
         zoomToFitTracking(driverLocation!!, startPoint!!)
@@ -266,38 +283,49 @@ class LocationActivity : AppCompatActivity() {
 
         CoroutineScope(Dispatchers.Main).launch {
             findViewById<TextView>(R.id.tvTrackStatus).text = "Driver Arriving"
+
+            // Phase 1: Driver to Pickup
             val routeToPickup = fetchRoutePoints(driverLocation!!, startPoint!!)
             if (routeToPickup.isNotEmpty()) {
                 drawPolyline(routeToPickup, Color.BLUE)
-                animateMarker(driverMarker!!, routeToPickup, 5000)
+                animateMarker(driverMarker!!, routeToPickup, 4000) // Faster for demo
             }
 
             delay(1000)
 
             if (endPoint != null) {
+                // Phase 2: Pickup to Destination
                 findViewById<TextView>(R.id.tvTrackStatus).text = "On the way"
                 findViewById<TextView>(R.id.tvTrackTime).text = "Arriving soon"
 
+                // Clear previous route
                 if(routePolyline != null) map.overlays.remove(routePolyline)
 
                 val routeToDest = fetchRoutePoints(startPoint!!, endPoint!!)
                 if (routeToDest.isNotEmpty()) {
                     drawPolyline(routeToDest, Color.GREEN)
                     zoomToFitTracking(startPoint!!, endPoint!!)
-                    animateMarker(driverMarker!!, routeToDest, 5000)
+                    animateMarker(driverMarker!!, routeToDest, 4000) // Faster for demo
                 }
 
+                // Phase 3: Arrived
                 findViewById<TextView>(R.id.tvTrackStatus).text = "Arrived"
-                Toast.makeText(this@LocationActivity, "You have arrived!", Toast.LENGTH_LONG).show()
+
+                // Fill data for Arrived Sheet
+                findViewById<TextView>(R.id.tvArrivedPrice).text = selectedDriver!!.price
+
+                // Transition to Arrived Sheet
+                transitionToSheet(arrivedSheetBehavior)
             }
         }
     }
+
+    // ... Rest of the existing methods (animateMarker, fetchRoutePoints, etc) remain unchanged ...
 
     private suspend fun animateMarker(marker: Marker, points: ArrayList<GeoPoint>, durationMs: Long) {
         val interval = 20L
         val steps = (durationMs / interval).toInt()
         val pointsCount = points.size
-
         for (i in 0..steps) {
             val progress = i.toFloat() / steps
             val currentIndex = (progress * (pointsCount - 1)).toInt()
@@ -315,8 +343,7 @@ class LocationActivity : AppCompatActivity() {
         return withContext(Dispatchers.IO) {
             val poly = ArrayList<GeoPoint>()
             try {
-                val routeUrl =
-                    "https://router.project-osrm.org/route/v1/driving/${start.longitude},${start.latitude};${end.longitude},${end.latitude}?overview=full&geometries=polyline"
+                val routeUrl = "https://router.project-osrm.org/route/v1/driving/${start.longitude},${start.latitude};${end.longitude},${end.latitude}?overview=full&geometries=polyline"
                 val url = URL(routeUrl)
                 val connection = url.openConnection() as HttpURLConnection
                 connection.requestMethod = "GET"
@@ -370,11 +397,7 @@ class LocationActivity : AppCompatActivity() {
 
     private fun setupTrackingLogic() {
         findViewById<MaterialButton>(R.id.btnCancelTrip).setOnClickListener {
-            // Reset to initial state
-            map.overlays.clear()
-            map.invalidate()
-            transitionToSheet(locationSheetBehavior)
-            Toast.makeText(this, "Perjalanan dibatalkan", Toast.LENGTH_SHORT).show()
+            showCancelConfirmationDialog()
         }
         findViewById<ImageButton>(R.id.btnChat).setOnClickListener {
             Toast.makeText(this, "Membuka Chat...", Toast.LENGTH_SHORT).show()
@@ -382,6 +405,41 @@ class LocationActivity : AppCompatActivity() {
         findViewById<ImageButton>(R.id.btnCall).setOnClickListener {
             Toast.makeText(this, "Menelpon Driver...", Toast.LENGTH_SHORT).show()
         }
+    }
+
+    private fun showCancelConfirmationDialog() {
+        val dialog = Dialog(this)
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
+        dialog.setContentView(R.layout.dialog_cancel_trip)
+
+        dialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+        dialog.window?.setLayout(
+            LinearLayout.LayoutParams.MATCH_PARENT,
+            LinearLayout.LayoutParams.WRAP_CONTENT
+        )
+
+        val btnKeep = dialog.findViewById<MaterialButton>(R.id.btnDialogKeep)
+        val btnCancel = dialog.findViewById<MaterialButton>(R.id.btnDialogCancel)
+
+        btnKeep.setOnClickListener {
+            dialog.dismiss()
+        }
+
+        btnCancel.setOnClickListener {
+            dialog.dismiss()
+            performCancellation()
+        }
+
+        dialog.show()
+    }
+
+    private fun performCancellation() {
+        map.overlays.clear()
+        map.invalidate()
+
+        transitionToSheet(locationSheetBehavior)
+
+        Toast.makeText(this, "Trip cancelled", Toast.LENGTH_SHORT).show()
     }
 
     private fun setupAutocomplete() {
@@ -400,9 +458,7 @@ class LocationActivity : AppCompatActivity() {
         etDropoff.addTextChangedListener(object : TextWatcher {
             private var searchJob: Job? = null
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
-            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                searchJob?.cancel()
-            }
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) { searchJob?.cancel() }
             override fun afterTextChanged(s: Editable?) {
                 val query = s.toString()
                 if (query.length < 3) return
@@ -416,11 +472,9 @@ class LocationActivity : AppCompatActivity() {
 
     private suspend fun fetchSuggestions(query: String) {
         val encodedQuery = URLEncoder.encode(query, "UTF-8")
-        var urlString =
-            "https://nominatim.openstreetmap.org/search?q=$encodedQuery&format=json&limit=5&addressdetails=1"
+        var urlString = "https://nominatim.openstreetmap.org/search?q=$encodedQuery&format=json&limit=5&addressdetails=1"
         if (cityBoundingBox != null) {
-            val viewBoxStr =
-                "${cityBoundingBox!!.lonWest},${cityBoundingBox!!.latNorth},${cityBoundingBox!!.lonEast},${cityBoundingBox!!.latSouth}"
+            val viewBoxStr = "${cityBoundingBox!!.lonWest},${cityBoundingBox!!.latNorth},${cityBoundingBox!!.lonEast},${cityBoundingBox!!.latSouth}"
             urlString += "&viewbox=$viewBoxStr&bounded=1"
         }
         try {
@@ -435,10 +489,7 @@ class LocationActivity : AppCompatActivity() {
                 val newSuggestions = ArrayList<PlaceSuggestion>()
                 for (i in 0 until jsonArray.length()) {
                     val obj = jsonArray.getJSONObject(i)
-                    val name = obj.getString("display_name")
-                    val lat = obj.getDouble("lat")
-                    val lon = obj.getDouble("lon")
-                    newSuggestions.add(PlaceSuggestion(name, lat, lon))
+                    newSuggestions.add(PlaceSuggestion(obj.getString("display_name"), obj.getDouble("lat"), obj.getDouble("lon")))
                 }
                 withContext(Dispatchers.Main) {
                     suggestionAdapter.clear()
@@ -447,9 +498,7 @@ class LocationActivity : AppCompatActivity() {
                     etDropoff.showDropDown()
                 }
             }
-        } catch (e: Exception) {
-            e.printStackTrace()
-        }
+        } catch (e: Exception) { e.printStackTrace() }
     }
 
     private fun processSelectedLocation() {
@@ -480,22 +529,9 @@ class LocationActivity : AppCompatActivity() {
         map.controller.setZoom(18.0)
     }
 
-    private fun setupBottomSheet() {
-        // Redundant call, logic moved to setupSheets() and called in onCreate.
-        // Keeping empty or removing content to avoid conflict with initViews variables.
-    }
-
     private fun getCurrentLocation() {
-        if (ContextCompat.checkSelfPermission(
-                this,
-                Manifest.permission.ACCESS_FINE_LOCATION
-            ) != PackageManager.PERMISSION_GRANTED
-        ) {
-            ActivityCompat.requestPermissions(
-                this,
-                arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),
-                1
-            )
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.ACCESS_FINE_LOCATION), 1)
             return
         }
         val fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
@@ -512,12 +548,7 @@ class LocationActivity : AppCompatActivity() {
 
     private fun restrictMapToCity(center: GeoPoint) {
         val radius = 0.2
-        cityBoundingBox = BoundingBox(
-            center.latitude + radius,
-            center.longitude + radius,
-            center.latitude - radius,
-            center.longitude - radius
-        )
+        cityBoundingBox = BoundingBox(center.latitude + radius, center.longitude + radius, center.latitude - radius, center.longitude - radius)
         map.setScrollableAreaLimitDouble(cityBoundingBox)
         map.setMinZoomLevel(13.0)
         map.invalidate()
@@ -529,13 +560,10 @@ class LocationActivity : AppCompatActivity() {
                 val geocoder = Geocoder(this@LocationActivity, Locale.getDefault())
                 val addresses = geocoder.getFromLocation(point.latitude, point.longitude, 1)
                 if (!addresses.isNullOrEmpty()) {
-                    val addressText =
-                        addresses[0].thoroughfare ?: addresses[0].subLocality ?: "Lokasi Saya"
+                    val addressText = addresses[0].thoroughfare ?: addresses[0].subLocality ?: "Lokasi Saya"
                     withContext(Dispatchers.Main) { etPickup.setText(addressText) }
                 }
-            } catch (e: Exception) {
-                e.printStackTrace()
-            }
+            } catch (e: Exception) { e.printStackTrace() }
         }
     }
 
@@ -550,17 +578,9 @@ class LocationActivity : AppCompatActivity() {
                     endPoint = GeoPoint(location.latitude, location.longitude)
                     withContext(Dispatchers.Main) { processSelectedLocation() }
                 } else {
-                    withContext(Dispatchers.Main) {
-                        Toast.makeText(
-                            this@LocationActivity,
-                            "Lokasi tidak ditemukan",
-                            Toast.LENGTH_SHORT
-                        ).show()
-                    }
+                    withContext(Dispatchers.Main) { Toast.makeText(this@LocationActivity, "Lokasi tidak ditemukan", Toast.LENGTH_SHORT).show() }
                 }
-            } catch (e: Exception) {
-                e.printStackTrace()
-            }
+            } catch (e: Exception) { e.printStackTrace() }
         }
     }
 
@@ -568,17 +588,13 @@ class LocationActivity : AppCompatActivity() {
         etDropoff.setOnEditorActionListener { _, actionId, _ ->
             if (actionId == EditorInfo.IME_ACTION_SEARCH || actionId == EditorInfo.IME_ACTION_DONE) {
                 val query = etDropoff.text.toString()
-                if (query.isNotEmpty()) {
-                    searchLocation(query); hideKeyboard()
-                }
+                if (query.isNotEmpty()) { searchLocation(query); hideKeyboard() }
                 true
             } else false
         }
         btnOrder.setOnClickListener {
             val query = etDropoff.text.toString()
-            if (query.isNotEmpty()) {
-                searchLocation(query); hideKeyboard()
-            } else etDropoff.error = "Masukkan tujuan dulu"
+            if (query.isNotEmpty()) { searchLocation(query); hideKeyboard() } else etDropoff.error = "Masukkan tujuan dulu"
         }
     }
 
@@ -619,9 +635,7 @@ class LocationActivity : AppCompatActivity() {
         if (startPoint == null || endPoint == null) return
         CoroutineScope(Dispatchers.Main).launch {
             val routePoints = fetchRoutePoints(startPoint!!, endPoint!!)
-            if (routePoints.isNotEmpty()) {
-                drawPolyline(routePoints, Color.BLUE)
-            }
+            if (routePoints.isNotEmpty()) { drawPolyline(routePoints, Color.BLUE) }
         }
     }
 
@@ -632,9 +646,7 @@ class LocationActivity : AppCompatActivity() {
         var lat = 0
         var lng = 0
         while (index < len) {
-            var b: Int;
-            var shift = 0;
-            var result = 0
+            var b: Int; var shift = 0; var result = 0
             do {
                 b = encoded[index++].code - 63
                 result = result or (b and 0x1f shl shift)

@@ -27,6 +27,7 @@
         app:layout_anchor="@id/map"
         app:layout_anchorGravity="top|start"/>
 
+
     <LinearLayout
         android:id="@+id/locationBottomSheet"
         android:layout_width="match_parent"
@@ -712,6 +713,218 @@
             android:backgroundTint="#EF4444"
             android:textAllCaps="false"
             android:text="Cancel" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/arrivedBottomSheet"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/bg_bottom_sheet_rounded"
+        android:orientation="vertical"
+        android:elevation="70dp"
+        android:paddingHorizontal="@dimen/space_xl"
+        android:paddingBottom="@dimen/space_xl"
+        app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior"
+        app:behavior_peekHeight="100dp"
+        app:behavior_hideable="true">
+
+        <View
+            android:layout_width="40dp"
+            android:layout_height="4dp"
+            android:layout_gravity="center"
+            android:layout_marginTop="@dimen/space_md"
+            android:background="@drawable/bg_search_field"
+            android:backgroundTint="#D1D5DB" />
+
+        <ImageView
+            android:id="@+id/ivArrived"
+            android:layout_width="120dp"
+            android:layout_height="120dp"
+            android:layout_gravity="center"
+            android:layout_marginTop="@dimen/space_xl"
+            android:src="@drawable/notification_success"
+            android:contentDescription="Arrived Success" />
+
+        <TextView
+            style="@style/Typography.H2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginTop="@dimen/space_lg"
+            android:text="Arrived at Destination!"
+            android:textColor="@color/neutral_text_primary" />
+
+        <TextView
+            style="@style/Typography.BodyMd"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/space_md"
+            android:gravity="center"
+            android:text="You have arrived safely. Thank you for using SemuaBisa."
+            android:textColor="@color/neutral_text_secondary" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/space_lg"
+            android:background="@drawable/bg_search_field"
+            android:orientation="horizontal"
+            android:padding="16dp">
+
+            <TextView
+                style="@style/Typography.BodyMd"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Total Payment" />
+
+            <TextView
+                android:id="@+id/tvArrivedPrice"
+                style="@style/Typography.H3"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Rp. 15.000"
+                android:textColor="@color/primary_500" />
+        </LinearLayout>
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnReviewTrip"
+            style="@style/Button.Primary"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/button_height"
+            android:layout_marginTop="32dp"
+            android:text="Give Review"
+            android:textAllCaps="false" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnFinishTrip"
+            style="@style/Button.Secondary"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/button_height"
+            android:layout_marginTop="12dp"
+            android:text="Back to Home"
+            android:textAllCaps="false" />
+
+
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/reviewBottomSheet"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/bg_bottom_sheet_rounded"
+        android:orientation="vertical"
+        android:elevation="80dp"
+        android:paddingHorizontal="@dimen/space_xl"
+        android:paddingBottom="@dimen/space_xl"
+        app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior"
+        app:behavior_peekHeight="100dp"
+        app:behavior_hideable="true">
+
+        <View
+            android:layout_width="40dp"
+            android:layout_height="4dp"
+            android:layout_gravity="center"
+            android:layout_marginTop="@dimen/space_md"
+            android:background="@drawable/bg_search_field"
+            android:backgroundTint="#D1D5DB" />
+
+        <TextView
+            style="@style/Typography.H2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginTop="@dimen/space_lg"
+            android:text="How was your trip?" />
+
+        <TextView
+            style="@style/Typography.BodyMd"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginTop="8dp"
+            android:text="Your feedback helps us improve"
+            android:textColor="@color/neutral_text_secondary" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="24dp"
+            android:gravity="center"
+            android:orientation="vertical">
+
+            <androidx.cardview.widget.CardView
+                android:layout_width="80dp"
+                android:layout_height="80dp"
+                app:cardCornerRadius="40dp"
+                app:cardElevation="0dp">
+                <ImageView
+                    android:id="@+id/ivReviewDriverPhoto"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:scaleType="centerCrop"
+                    android:src="@drawable/avatar" />
+            </androidx.cardview.widget.CardView>
+
+            <TextView
+                android:id="@+id/tvReviewDriverName"
+                style="@style/Typography.H3"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:text="Gustavo Franci" />
+
+            <TextView
+                android:id="@+id/tvReviewPlate"
+                style="@style/Typography.Caption"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:text="B 1234 GFR"
+                android:textColor="@color/neutral_text_secondary"/>
+        </LinearLayout>
+
+        <RatingBar
+            android:id="@+id/ratingBar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginTop="24dp"
+            android:numStars="5"
+            android:stepSize="1.0"
+            android:rating="0"
+            android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
+            android:progressTint="#F59E0B"
+            android:secondaryProgressTint="#F59E0B" />
+
+        <TextView
+            style="@style/Typography.H4"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="24dp"
+            android:text="Leave a comment" />
+
+        <EditText
+            android:id="@+id/etReviewComment"
+            style="@style/Typography.BodyMd"
+            android:layout_width="match_parent"
+            android:layout_height="100dp"
+            android:layout_marginTop="12dp"
+            android:background="@drawable/bg_search_field"
+            android:gravity="top|start"
+            android:hint="Write your experience here..."
+            android:padding="16dp" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnSubmitReview"
+            style="@style/Button.Primary"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/button_height"
+            android:layout_marginTop="24dp"
+            android:text="Submit Review"
+            android:textAllCaps="false" />
 
     </LinearLayout>
 

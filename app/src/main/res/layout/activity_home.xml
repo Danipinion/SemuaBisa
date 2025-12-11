@@ -12,218 +12,166 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_marginBottom="80dp"
-        android:fillViewport="true"> <androidx.constraintlayout.widget.ConstraintLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:paddingBottom="@dimen/space_xl">
-
-        <ImageView
-            android:id="@+id/ivHeaderBg"
-            android:layout_width="match_parent"
-            android:layout_height="280dp"
-            android:scaleType="centerCrop"
-            android:src="@drawable/bg_top"
-            app:layout_constraintTop_toTopOf="parent"
-            tools:src="@tools:sample/backgrounds/scenic"/>
-        <TextView
-            android:id="@+id/tvLocation"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/space_xl"
-            android:background="@drawable/bg_search_field"
-            android:backgroundTint="#1F2937"
-            android:drawableStart="@drawable/ic_location"
-            android:drawablePadding="@dimen/space_xs"
-            android:paddingHorizontal="@dimen/space_md"
-            android:paddingVertical="@dimen/space_xs"
-            android:text="Madiun State..."
-            android:textColor="@color/white"
-            style="@style/Typography.Caption"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
-        <androidx.cardview.widget.CardView
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:layout_marginStart="@dimen/space_lg"
-            app:cardCornerRadius="20dp"
-            app:layout_constraintBottom_toBottomOf="@+id/tvLocation"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="@+id/tvLocation">
-            <ImageView
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:src="@drawable/avatar"
-                android:scaleType="centerCrop"/>
-        </androidx.cardview.widget.CardView>
-
-        <ImageButton
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:layout_marginEnd="@dimen/space_lg"
-            android:background="@drawable/bg_circle_social"
-            android:backgroundTint="#1F2937"
-            android:src="@drawable/ic_notification"
-            app:layout_constraintBottom_toBottomOf="@+id/tvLocation"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="@+id/tvLocation"
-            app:tint="@color/white" />
-
-        <TextView
-            android:id="@+id/tvGreeting"
-            style="@style/Typography.H3"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginHorizontal="@dimen/space_lg"
-            android:layout_marginTop="@dimen/space_xl"
-            android:text="Hello, Danipinions 👋"
-            app:layout_constraintTop_toBottomOf="@+id/tvLocation" />
-
-        <TextView
-            android:id="@+id/tvGreetingSub"
-            style="@style/Typography.BodyMd"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginHorizontal="@dimen/space_lg"
-            android:text="Find your favorite location, and enjoy your trip"
-            app:layout_constraintTop_toBottomOf="@+id/tvGreeting" />
-
-        <EditText
-            android:id="@+id/etSearch"
-            style="@style/Typography.BodyMd"
-            android:layout_width="match_parent"
-            android:layout_height="50dp"
-            android:layout_marginHorizontal="@dimen/space_lg"
-            android:layout_marginTop="@dimen/space_lg"
-            android:background="@drawable/bg_search_field"
-            android:drawableStart="@android:drawable/ic_menu_search"
-            android:drawablePadding="@dimen/space_md"
-            android:hint="Find Your Favorite Location..."
-            android:paddingHorizontal="@dimen/space_lg"
-            app:layout_constraintTop_toBottomOf="@+id/tvGreetingSub" />
+        android:fillViewport="true">
 
         <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/cardWallet"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginHorizontal="@dimen/space_lg"
-            android:layout_marginTop="@dimen/space_xl"
-            android:background="@drawable/bg_wallet_card"
-            android:padding="@dimen/space_lg"
-            app:layout_constraintTop_toBottomOf="@+id/etSearch">
+            android:paddingBottom="@dimen/space_xl">
 
             <ImageView
-                android:id="@+id/ivWallet"
-                android:layout_width="48dp"
-                android:layout_height="48dp"
-                android:src="@drawable/sbpay"
-                app:layout_constraintStart_toStartOf="parent"
+                android:id="@+id/ivHeaderBg"
+                android:layout_width="match_parent"
+                android:layout_height="280dp"
+                android:scaleType="centerCrop"
+                android:src="@drawable/bg_top"
                 app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintBottom_toBottomOf="parent"/>
+                tools:src="@tools:sample/backgrounds/scenic"/>
 
             <TextView
-                android:id="@+id/tvBalance"
-                style="@style/Typography.H3"
+                android:id="@+id/tvLocation"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="@dimen/space_md"
-                android:text="Rp. 15.000"
-                app:layout_constraintStart_toEndOf="@+id/ivWallet"
-                app:layout_constraintTop_toTopOf="@+id/ivWallet" />
-
-            <TextView
-                android:id="@+id/tvPoints"
+                android:layout_marginTop="@dimen/space_xl"
+                android:background="@drawable/bg_search_field"
+                android:backgroundTint="#1F2937"
+                android:drawableStart="@drawable/ic_location"
+                android:drawablePadding="@dimen/space_xs"
+                android:paddingHorizontal="@dimen/space_md"
+                android:paddingVertical="@dimen/space_xs"
+                android:text="Madiun State..."
+                android:textColor="@color/white"
                 style="@style/Typography.Caption"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="🪙 6.000"
-                app:layout_constraintStart_toStartOf="@+id/tvBalance"
-                app:layout_constraintTop_toBottomOf="@+id/tvBalance" />
-
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="parent">
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
 
-                <TextView android:text="Top up" style="@style/Typography.Caption" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginEnd="8dp"/>
-                <TextView android:text="Pay" style="@style/Typography.Caption" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginEnd="8dp"/>
-                <TextView android:text="Withdraw" style="@style/Typography.Caption" android:layout_width="wrap_content" android:layout_height="wrap_content"/>
-            </LinearLayout>
+            <androidx.cardview.widget.CardView
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_marginStart="@dimen/space_lg"
+                app:cardCornerRadius="20dp"
+                app:layout_constraintBottom_toBottomOf="@+id/tvLocation"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="@+id/tvLocation">
+                <ImageView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:src="@drawable/avatar"
+                    android:scaleType="centerCrop"/>
+            </androidx.cardview.widget.CardView>
+
+            <ImageButton
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_marginEnd="@dimen/space_lg"
+                android:background="@drawable/bg_circle_social"
+                android:backgroundTint="#1F2937"
+                android:src="@drawable/ic_notification"
+                app:layout_constraintBottom_toBottomOf="@+id/tvLocation"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="@+id/tvLocation"
+                app:tint="@color/white" />
+
+            <TextView
+                android:id="@+id/tvGreeting"
+                style="@style/Typography.H3"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="@dimen/space_lg"
+                android:layout_marginTop="@dimen/space_xl"
+                android:text="Hello, Danipinions 👋"
+                app:layout_constraintTop_toBottomOf="@+id/tvLocation" />
+
+            <TextView
+                android:id="@+id/tvGreetingSub"
+                style="@style/Typography.BodyMd"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="@dimen/space_lg"
+                android:text="Find your favorite location, and enjoy your trip"
+                app:layout_constraintTop_toBottomOf="@+id/tvGreeting" />
+
+            <GridLayout
+                android:id="@+id/gridMenu"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="@dimen/space_lg"
+                android:layout_marginTop="@dimen/space_xl"
+                android:columnCount="3"
+                android:rowCount="2"
+                app:layout_constraintTop_toBottomOf="@+id/tvGreetingSub">
+
+                <ImageView
+                    android:id="@+id/menuMotor"
+                    android:layout_width="0dp"
+                    android:layout_height="60dp"
+                    android:layout_columnWeight="1"
+                    android:layout_margin="4dp"
+                    android:background="@drawable/bg_search_field"
+                    android:padding="12dp"
+                    android:src="@drawable/motor" />
+
+                <ImageView
+                    android:layout_width="0dp"
+                    android:layout_height="60dp"
+                    android:layout_columnWeight="1"
+                    android:layout_margin="4dp"
+                    android:background="@drawable/bg_search_field"
+                    android:padding="12dp"
+                    android:src="@drawable/car" />
+
+                <ImageView
+                    android:layout_width="0dp"
+                    android:layout_height="60dp"
+                    android:layout_columnWeight="1"
+                    android:layout_margin="4dp"
+                    android:background="@drawable/bg_search_field"
+                    android:src="@drawable/bus"
+                    android:padding="12dp" />
+
+                <ImageView
+                    android:id="@+id/menuTrain"
+                    android:layout_width="0dp"
+                    android:layout_height="60dp"
+                    android:layout_columnWeight="1"
+                    android:layout_margin="4dp"
+                    android:background="@drawable/bg_search_field"
+                    android:src="@drawable/train"
+                    android:padding="12dp" />
+
+                <ImageView
+                    android:layout_width="0dp"
+                    android:layout_height="60dp"
+                    android:layout_columnWeight="1"
+                    android:layout_margin="4dp"
+                    android:background="@drawable/bg_search_field"
+                    android:src="@drawable/plane"
+                    android:padding="12dp" />
+
+            </GridLayout>
+
+            <TextView
+                android:id="@+id/tvNewsTitle"
+                style="@style/Typography.H4"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/space_lg"
+                android:layout_marginTop="@dimen/space_xl"
+                android:text="NEWS"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/gridMenu" />
+
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="140dp"
+                android:layout_marginHorizontal="@dimen/space_lg"
+                android:layout_marginTop="@dimen/space_md"
+                android:scaleType="fitXY"
+                android:src="@drawable/news1"
+                app:layout_constraintTop_toBottomOf="@+id/tvNewsTitle"/>
 
         </androidx.constraintlayout.widget.ConstraintLayout>
-
-        <GridLayout
-            android:id="@+id/gridMenu"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginHorizontal="@dimen/space_lg"
-            android:layout_marginTop="@dimen/space_xl"
-            android:columnCount="3"
-            android:rowCount="2"
-            app:layout_constraintTop_toBottomOf="@+id/cardWallet">
-
-            <ImageView
-                android:layout_width="0dp"
-                android:layout_height="60dp"
-                android:layout_columnWeight="1"
-                android:layout_margin="4dp"
-                android:background="@drawable/bg_search_field"
-                android:padding="12dp"
-                android:src="@drawable/ic_remix"
-                />
-
-            <ImageView
-                android:id="@+id/menuMotor"
-                android:layout_width="0dp"
-                android:layout_height="60dp"
-                android:layout_columnWeight="1"
-                android:layout_margin="4dp"
-                android:background="@drawable/bg_search_field"
-                android:padding="12dp"
-                android:src="@drawable/motor"
-                />
-
-            <ImageView
-                android:layout_width="0dp"
-                android:layout_height="60dp"
-                android:layout_columnWeight="1"
-                android:layout_margin="4dp"
-                android:background="@drawable/bg_search_field"
-                android:padding="12dp"
-                android:src="@drawable/car"
-                />
-
-            <ImageView android:layout_width="0dp" android:layout_height="60dp" android:layout_columnWeight="1" android:layout_margin="4dp" android:background="@drawable/bg_search_field" android:src="@drawable/bus" android:padding="12dp" />
-            <ImageView android:id="@+id/menuTrain" android:layout_width="0dp" android:layout_height="60dp" android:layout_columnWeight="1" android:layout_margin="4dp" android:background="@drawable/bg_search_field" android:src="@drawable/train" android:padding="12dp" />
-            <ImageView android:layout_width="0dp" android:layout_height="60dp" android:layout_columnWeight="1" android:layout_margin="4dp" android:background="@drawable/bg_search_field" android:src="@drawable/plane" android:padding="12dp" />
-
-        </GridLayout>
-
-        <TextView
-            android:id="@+id/tvNewsTitle"
-            style="@style/Typography.H4"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/space_lg"
-            android:layout_marginTop="@dimen/space_xl"
-            android:text="NEWS"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/gridMenu" />
-
-        <ImageView
-            android:layout_width="match_parent"
-            android:layout_height="140dp"
-            android:layout_marginHorizontal="@dimen/space_lg"
-            android:layout_marginTop="@dimen/space_md"
-            android:scaleType="fitXY"
-            android:src="@drawable/news1"
-            app:layout_constraintTop_toBottomOf="@+id/tvNewsTitle"/>
-
-    </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.core.widget.NestedScrollView>
 
     <com.google.android.material.bottomappbar.BottomAppBar
