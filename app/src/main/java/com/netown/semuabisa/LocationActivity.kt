@@ -59,7 +59,8 @@ class LocationActivity : AppCompatActivity() {
     private lateinit var driverSheetBehavior: BottomSheetBehavior<LinearLayout>
     private lateinit var confirmationSheetBehavior: BottomSheetBehavior<LinearLayout>
     private lateinit var paymentSheetBehavior: BottomSheetBehavior<LinearLayout>
-
+    private lateinit var successSheetBehavior: BottomSheetBehavior<LinearLayout>
+    private lateinit var trackingSheetBehavior: BottomSheetBehavior<LinearLayout>
     private var selectedDriver: Driver? = null
     private lateinit var rbCash: RadioButton
 
@@ -69,6 +70,8 @@ class LocationActivity : AppCompatActivity() {
     private var endMarker: Marker? = null
     private var cityBoundingBox: BoundingBox? = null
     private var routePolyline: Polyline? = null
+    private var driverMarker: Marker? = null
+    private var driverLocation: GeoPoint? = null
 
     private lateinit var rvDrivers: RecyclerView
     private lateinit var adapterDriver: DriverAdapter
@@ -98,6 +101,8 @@ class LocationActivity : AppCompatActivity() {
         setupDriverList()
         setupConfirmationLogic()
         setupPaymentLogic()
+        setupSuccessLogic()
+        setupTrackingLogic()
     }
 
     private fun initViews() {
@@ -132,6 +137,14 @@ class LocationActivity : AppCompatActivity() {
         val paySheet = findViewById<LinearLayout>(R.id.paymentBottomSheet)
         paymentSheetBehavior = BottomSheetBehavior.from(paySheet)
         paymentSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
+
+        val successSheet = findViewById<LinearLayout>(R.id.successBottomSheet)
+        successSheetBehavior = BottomSheetBehavior.from(successSheet)
+        successSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
+
+        val trackSheet = findViewById<LinearLayout>(R.id.trackingBottomSheet)
+        trackingSheetBehavior = BottomSheetBehavior.from(trackSheet)
+        trackingSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
     }
 
     private fun setupDriverList() {
@@ -192,18 +205,110 @@ class LocationActivity : AppCompatActivity() {
         }
 
         findViewById<MaterialButton>(R.id.btnContinuePayment).setOnClickListener {
+            val rbCash = findViewById<RadioButton>(R.id.rbCash)
+
             if (rbCash.isChecked) {
-                Toast.makeText(this, "Pembayaran CASH dipilih. Pesanan sedang diproses!", Toast.LENGTH_LONG).show()
-
                 paymentSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
-
-                selectedDriver = null
-                map.overlays.clear()
-                map.invalidate()
-
+                successSheetBehavior.state = BottomSheetBehavior.STATE_EXPANDED
             } else {
-                Toast.makeText(this, "Saat ini hanya metode Cash yang didukung.", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, "Hanya metode Cash yang tersedia saat ini", Toast.LENGTH_SHORT).show()
             }
+        }
+    }
+
+    private fun setupSuccessLogic() {
+        findViewById<MaterialButton>(R.id.btnTrackDriver).setOnClickListener {
+            successSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
+            startLiveTracking()
+        }
+    }
+
+    private fun startLiveTracking() {
+        if (startPoint == null) return
+
+        // 1. Bersihkan Peta (Rute lama & marker lama hapus)
+        map.overlays.clear()
+
+        // 2. Pasang Marker User (Posisi Jemput)
+        addPickupMarker(startPoint!!)
+
+        // 3. Simulasi Posisi Driver (Misal: geser dikit dari posisi user)
+        // Kita buat driver seolah-olah ada di koordinat +0.005 derajat dari user
+        driverLocation = GeoPoint(startPoint!!.latitude + 0.005, startPoint!!.longitude + 0.005)
+
+        // 4. Pasang Marker Driver
+        addDriverMarker(driverLocation!!)
+
+        // 5. Gambar Rute (Driver -> User)
+        // Kita set endpoint sementara ke posisi driver untuk drawRoute
+        val tempStart = startPoint
+        startPoint = driverLocation // Start rute dari driver
+        endPoint = tempStart        // End rute ke user
+
+        drawRoute() // Gambar garis
+
+        // Kembalikan variabel startPoint ke posisi user agar konsisten
+        startPoint = tempStart
+
+        // 6. Zoom agar kelihatan dua-duanya
+        zoomToFitTracking(driverLocation!!, startPoint!!)
+
+        // 7. Buka Sheet Tracking
+        trackingSheetBehavior.state = BottomSheetBehavior.STATE_EXPANDED
+
+        // Update Data UI Tracking (Isi dengan data selectedDriver)
+        if (selectedDriver != null) {
+            findViewById<TextView>(R.id.tvTrackDriverName).text = selectedDriver!!.name
+            findViewById<TextView>(R.id.tvTrackRating).text = "⭐ ${selectedDriver!!.rating}"
+            findViewById<TextView>(R.id.tvTrackPrice).text = selectedDriver!!.price
+            findViewById<TextView>(R.id.tvTrackSeats).text = "${selectedDriver!!.seats} Seats"
+        }
+    }
+
+    private fun addDriverMarker(point: GeoPoint) {
+        // Buat Marker khusus Driver
+        driverMarker = Marker(map)
+        driverMarker?.position = point
+        driverMarker?.setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM)
+
+        // Ganti icon ini dengan foto/icon mobil jika ada
+        driverMarker?.icon = ContextCompat.getDrawable(this, R.drawable.ic_launcher_foreground)
+        driverMarker?.title = "Driver sedang menuju lokasi"
+
+        map.overlays.add(driverMarker)
+        map.invalidate()
+    }
+
+    private fun zoomToFitTracking(driver: GeoPoint, user: GeoPoint) {
+        val boundingBox = BoundingBox(
+            maxOf(driver.latitude, user.latitude),
+            maxOf(driver.longitude, user.longitude),
+            minOf(driver.latitude, user.latitude),
+            minOf(driver.longitude, user.longitude)
+        )
+        map.zoomToBoundingBox(boundingBox, true, 150) // Padding lebih besar biar lega
+    }
+
+    private fun setupTrackingLogic() {
+        // Tombol Cancel
+        findViewById<MaterialButton>(R.id.btnCancelTrip).setOnClickListener {
+            // Logika Cancel: Reset semua ke awal
+            trackingSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
+            map.overlays.clear()
+            map.invalidate()
+
+            // Buka lagi input lokasi (Reset Flow)
+            locationSheetBehavior.state = BottomSheetBehavior.STATE_COLLAPSED
+
+            Toast.makeText(this, "Perjalanan dibatalkan", Toast.LENGTH_SHORT).show()
+        }
+
+        // Tombol Chat & Call (Dummy)
+        findViewById<ImageButton>(R.id.btnChat).setOnClickListener {
+            Toast.makeText(this, "Membuka Chat...", Toast.LENGTH_SHORT).show()
+        }
+        findViewById<ImageButton>(R.id.btnCall).setOnClickListener {
+            Toast.makeText(this, "Menelpon Driver...", Toast.LENGTH_SHORT).show()
         }
     }
 
