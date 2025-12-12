@@ -14,11 +14,11 @@ class HistoryAdapter(private val list: List<HistoryModel>) :
     class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         val txtFrom = view.findViewById<TextView>(R.id.txtFromAddress)
         val txtTo = view.findViewById<TextView>(R.id.txtToAddress)
-        val txtDateTime = view.findViewById<TextView>(R.id.txtDateTime)
-        val txtType = view.findViewById<TextView>(R.id.txtType)
-        val txtDriver = view.findViewById<TextView>(R.id.txtDriver)
-        val txtSeats = view.findViewById<TextView>(R.id.txtSeats)
-        val txtPayment = view.findViewById<TextView>(R.id.txtPaymentStatus)
+        val txtDateTime = view.findViewById<TextView>(R.id.txtDateTimeValue)
+        val txtType = view.findViewById<TextView>(R.id.txtTypeValue)
+        val txtDriver = view.findViewById<TextView>(R.id.txtDriverValue)
+        val txtSeats = view.findViewById<TextView>(R.id.txtSeatsValue)
+        val txtPayment = view.findViewById<TextView>(R.id.txtPaymentsStatusValue)
         val imgVehicle = view.findViewById<ImageView>(R.id.imgVehicle)
     }
 
@@ -32,13 +32,22 @@ class HistoryAdapter(private val list: List<HistoryModel>) :
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val item = list[position]
+        val iconRes = when (item.type) {
+            "Motor" -> R.drawable.motor
+            "Car" -> R.drawable.car
+            "Train" -> R.drawable.train
+            "Bus" -> R.drawable.bus
+            "Plane" -> R.drawable.plane
+            else -> R.drawable.ic_history_booking
+        }
 
         holder.txtFrom.text = item.fromAddress
         holder.txtTo.text = item.toAddress
-        holder.txtDateTime.text = "Date & Time: ${item.dateTime}"
-        holder.txtType.text = "Type: ${item.type}"
-        holder.txtDriver.text = "Driver: ${item.driver}"
-        holder.txtSeats.text = "Seats: ${item.seats}"
-        holder.txtPayment.text = "Payment Status: ${item.paymentStatus}"
+        holder.txtDateTime.text = item.dateTime
+        holder.txtType.text = item.type
+        holder.txtDriver.text = item.driver
+        holder.txtSeats.text = item.seats
+        holder.txtPayment.text = item.paymentStatus
+        holder.imgVehicle.setImageResource(iconRes)
     }
 }
