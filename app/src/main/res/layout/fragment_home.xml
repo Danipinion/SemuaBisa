@@ -38,6 +38,7 @@
         </androidx.cardview.widget.CardView>
 
         <ImageButton
+            android:id="@+id/btnNotification"
             android:layout_width="40dp"
             android:layout_height="40dp"
             android:layout_marginEnd="@dimen/space_lg"

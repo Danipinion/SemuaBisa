@@ -46,8 +46,7 @@ class HistoryRecentFragment : Fragment() {
 
         // Setup Recycler
         recycler.layoutManager = LinearLayoutManager(requireContext())
-        // Disable nested scrolling to ensure smooth scrolling inside NestedScrollView
-        recycler.isNestedScrollingEnabled = false
+        // REMOVED: recycler.isNestedScrollingEnabled = false (We want it to scroll now)
 
         // Setup Tab Click Listeners
         setupTabs()
@@ -105,7 +104,6 @@ class HistoryRecentFragment : Fragment() {
 
     // --- DUMMY DATA GENERATORS ---
 
-    // Schedule: All excluded Motor/Car (e.g., Train, Bus, Plane)
     private fun getScheduleData(): List<HistoryModel> {
         return listOf(
             HistoryModel(
@@ -179,7 +177,6 @@ class HistoryRecentFragment : Fragment() {
         )
     }
 
-    // Completed: Only completed trips
     private fun getCompletedData(): List<HistoryModel> {
         return listOf(
             HistoryModel(
@@ -203,7 +200,6 @@ class HistoryRecentFragment : Fragment() {
         )
     }
 
-    // Canceled: Only canceled trips
     private fun getCanceledData(): List<HistoryModel> {
         return listOf(
             HistoryModel(
