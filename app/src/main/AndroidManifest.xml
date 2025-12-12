@@ -22,11 +22,6 @@
         <activity
             android:name=".LocationActivity"
             android:exported="false" />
-
-        <meta-data
-            android:name="com.google.android.geo.API_KEY"
-            android:value="MASUKKAN_API_KEY_KAMU_DISINI" />
-
         <activity
             android:name=".HomeActivity"
             android:exported="false" />
@@ -48,7 +43,6 @@
         <activity
             android:name=".MainActivity"
             android:exported="true" />
-
         <meta-data
             android:name="preloaded_fonts"
             android:resource="@array/preloaded_fonts" />

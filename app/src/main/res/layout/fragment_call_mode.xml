@@ -1,108 +1,146 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:gravity="center_horizontal"
-    android:padding="24dp"
-    android:background="@color/white">
+    android:background="@color/bg_secondary"
+    android:keepScreenOn="true">
 
-    <!-- Profile Image -->
-    <ImageView
-        android:id="@+id/imgProfile"
-        android:layout_width="120dp"
-        android:layout_height="120dp"
-        android:layout_marginTop="40dp"
-        android:src="@drawable/avatar_profile"
-        android:scaleType="centerCrop"
-        android:background="@drawable/circle_white"
-        android:padding="2dp" />
-
-    <!-- Name -->
-    <TextView
-        android:id="@+id/tvName"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Gostavo Franci"
-        android:textSize="20sp"
-        android:textColor="@color/black"
-        android:layout_marginTop="12dp"
-        android:textStyle="bold" />
-
-    <!-- Timer -->
-    <TextView
-        android:id="@+id/tvTimer"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="10:12"
-        android:textSize="14sp"
-        android:textColor="#3B82F6"
-        android:layout_marginTop="4dp" />
-
-    <!-- Control Buttons -->
     <LinearLayout
+        android:id="@+id/infoContainer"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
+        android:layout_height="0dp"
         android:gravity="center"
-        android:layout_marginTop="220dp">
+        android:orientation="vertical"
+        app:layout_constraintBottom_toTopOf="@+id/controlsContainer"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_weight="1">
 
-        <!-- Speaker -->
-        <LinearLayout
-            android:id="@+id/btnSpeaker"
-            android:layout_width="70dp"
-            android:layout_height="70dp"
-            android:gravity="center"
-            android:layout_marginHorizontal="12dp"
-            android:background="@drawable/call_ellipse_3">
-
-            <ImageView
-                android:layout_width="32dp"
-                android:layout_height="32dp"
-                android:src="@drawable/call_speaker" />
-        </LinearLayout>
-
-        <!-- Mute -->
-
-        <!-- Notes / Chat -->
-        <LinearLayout
-            android:id="@+id/btnMute"
-            android:layout_width="70dp"
-            android:layout_height="70dp"
-            android:layout_marginHorizontal="12dp"
-            android:background="@drawable/call_eclipse_5"
-            android:gravity="center">
+        <androidx.cardview.widget.CardView
+            android:layout_width="120dp"
+            android:layout_height="120dp"
+            app:cardCornerRadius="60dp"
+            app:cardElevation="8dp">
 
             <ImageView
-                android:layout_width="32dp"
-                android:layout_height="32dp"
-                android:src="@drawable/call_mute" />
-        </LinearLayout>
+                android:id="@+id/imgProfile"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:scaleType="centerCrop"
+                android:src="@drawable/avatar" />
+        </androidx.cardview.widget.CardView>
 
-        <LinearLayout
-            android:id="@+id/btnNotes"
-            android:layout_width="70dp"
-            android:layout_height="70dp"
-            android:gravity="center"
-            android:layout_marginHorizontal="12dp"
-            android:background="@drawable/call_eclipse_5">
+        <TextView
+            android:id="@+id/tvName"
+            style="@style/Typography.H2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="24dp"
+            android:text="Gustavo Franci"
+            android:textColor="@color/neutral_text_primary" />
 
-            <ImageView
-                android:layout_width="32dp"
-                android:layout_height="32dp"
-                android:src="@drawable/call_message" />
-        </LinearLayout>
+        <TextView
+            android:id="@+id/tvTimer"
+            style="@style/Typography.BodyMd"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="00:00"
+            android:textColor="@color/neutral_text_secondary" />
+
     </LinearLayout>
 
-    <!-- End Call Button -->
-    <androidx.appcompat.widget.AppCompatButton
-        android:id="@+id/btnEndCall"
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/controlsContainer"
         android:layout_width="match_parent"
-        android:layout_height="55dp"
-        android:layout_marginTop="50dp"
-        android:text="End"
-        android:textSize="16sp"
-        android:textColor="@color/white"
-        android:background="@drawable/red_button_bg" />
+        android:layout_height="0dp"
+        android:background="@drawable/bg_bottom_sheet_rounded"
+        android:padding="24dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/infoContainer"
+        app:layout_constraintVertical_weight="0.6">
 
-</LinearLayout>
+        <LinearLayout
+            android:id="@+id/menuButtons"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:orientation="horizontal"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toTopOf="@id/btnEndCall">
+
+            <LinearLayout
+                android:id="@+id/btnMute"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:orientation="vertical">
+
+                <ImageView
+                    android:id="@+id/ivMute"
+                    android:layout_width="56dp"
+                    android:layout_height="56dp"
+                    android:background="@drawable/bg_circle_social"
+                    android:backgroundTint="#F3F4F6"
+                    android:padding="14dp"
+                    android:src="@drawable/call_mute"
+                    app:tint="@color/neutral_text_primary" />
+
+                <TextView
+                    style="@style/Typography.Caption"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:text="Mute" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/btnSpeaker"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:orientation="vertical">
+
+                <ImageView
+                    android:id="@+id/ivSpeaker"
+                    android:layout_width="56dp"
+                    android:layout_height="56dp"
+                    android:background="@drawable/bg_circle_social"
+                    android:backgroundTint="#F3F4F6"
+                    android:padding="14dp"
+                    android:src="@drawable/call_speaker"
+                    app:tint="@color/neutral_text_primary" />
+
+                <TextView
+                    style="@style/Typography.Caption"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:text="Speaker" />
+            </LinearLayout>
+
+        </LinearLayout>
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnEndCall"
+            style="@style/Button.Primary"
+            android:layout_width="64dp"
+            android:layout_height="64dp"
+            android:layout_marginBottom="32dp"
+            android:backgroundTint="#EF4444"
+            app:cornerRadius="32dp"
+            app:icon="@drawable/ic_close"
+            app:iconTint="@color/white"
+            app:iconGravity="textStart"
+            app:iconPadding="0dp"
+            app:iconSize="32dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

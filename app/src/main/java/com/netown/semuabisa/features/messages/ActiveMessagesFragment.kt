@@ -6,12 +6,13 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.EditText
+import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.netown.semuabisa.HomeActivity
 import com.netown.semuabisa.R
-
 
 class ActiveMessagesFragment : Fragment() {
 
@@ -23,10 +24,7 @@ class ActiveMessagesFragment : Fragment() {
         ChatMessage("lorem ipsum", false),
         ChatMessage("lorem ipsum dolar", false),
         ChatMessage("lorem ipsum dolar", true),
-        ChatMessage(
-            "lorem ipsum dolar si amet\n...\ndolarr moneyy",
-            true
-        ),
+        ChatMessage("lorem ipsum dolar si amet\n...\ndolarr moneyy", true),
     )
 
     override fun onCreateView(
@@ -37,23 +35,32 @@ class ActiveMessagesFragment : Fragment() {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-
         recycler = view.findViewById(R.id.recyclerChat)
         edt = view.findViewById(R.id.edtMessage)
+
+        view.findViewById<View>(R.id.btnBack)?.setOnClickListener {
+            requireActivity().onBackPressedDispatcher.onBackPressed()
+        }
 
         adapter = ChatAdapter(messages)
         recycler.adapter = adapter
         recycler.layoutManager = LinearLayoutManager(requireContext())
 
         // Auto scroll to bottom
-        recycler.scrollToPosition(messages.size - 1)
+        if (messages.isNotEmpty()) {
+            recycler.scrollToPosition(messages.size - 1)
+        }
+
+        view.findViewById<ImageButton>(R.id.btnCall).setOnClickListener {
+            (activity as HomeActivity).loadFragment(CallModeFragment())
+        }
 
         view.findViewById<ImageView>(R.id.btnSend).setOnClickListener {
             val text = edt.text.toString()
             if (text.isNotEmpty()) {
                 messages.add(ChatMessage(text, true))
                 adapter.notifyItemInserted(messages.size - 1)
-                recycler.scrollToPosition(messages.size - 1)
+                recycler.smoothScrollToPosition(messages.size - 1)
                 edt.text.clear()
             }
         }
@@ -73,7 +80,18 @@ class ActiveMessagesFragment : Fragment() {
         val text = tv.text.toString()
         messages.add(ChatMessage(text, true))
         adapter.notifyItemInserted(messages.size - 1)
-        recycler.scrollToPosition(messages.size - 1)
+        recycler.smoothScrollToPosition(messages.size - 1)
+    }
+
+    // 2. Hide Bottom Bar when Entering
+    override fun onResume() {
+        super.onResume()
+        (activity as? HomeActivity)?.setBottomNavVisibility(false)
+    }
+
+    // 3. Show Bottom Bar when Leaving
+    override fun onDestroyView() {
+        super.onDestroyView()
+        (activity as? HomeActivity)?.setBottomNavVisibility(true)
     }
 }
-

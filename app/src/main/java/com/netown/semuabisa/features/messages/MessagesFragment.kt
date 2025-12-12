@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.netown.semuabisa.HomeActivity // Import HomeActivity
 import com.netown.semuabisa.R
 
 class MessagesFragment : Fragment() {
@@ -26,20 +27,16 @@ class MessagesFragment : Fragment() {
         recycler.layoutManager = LinearLayoutManager(requireContext())
 
         val data = mutableListOf(
-            MessageModel(
-                "Gostavo Franci",
-                "Lorem Ipsum dolar sip..",
-                "10.30",
-                R.drawable.avatar_profile,
-                true
-            ),
-            MessageModel("Gostavo Franci", "Lorem Ipsum dolar sip..", "10.30", R.drawable.avatar_profile),
-            MessageModel("Gostavo Franci", "Lorem Ipsum dolar sip..", "10.30", R.drawable.avatar_profile),
+            MessageModel("Gostavo Franci", "Lorem Ipsum dolar sip..", "10.30", R.drawable.avatar_profile, true),
             MessageModel("Gostavo Franci", "Lorem Ipsum dolar sip..", "10.30", R.drawable.avatar_profile),
             MessageModel("Gostavo Franci", "Lorem Ipsum dolar sip..", "10.30", R.drawable.avatar_profile)
         )
 
-        adapter = MessageAdapter(data)
+        adapter = MessageAdapter(data) { selectedMessage ->
+            val activity = requireActivity() as HomeActivity
+            activity.loadFragment(ActiveMessagesFragment())
+        }
+
         recycler.adapter = adapter
     }
 }
