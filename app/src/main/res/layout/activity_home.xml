@@ -77,28 +77,6 @@
             </LinearLayout>
 
             <LinearLayout
-                android:id="@+id/navQfd"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:gravity="center"
-                android:clickable="true"
-                android:focusable="true"
-                android:orientation="vertical">
-                <ImageView
-                    android:layout_width="24dp"
-                    android:layout_height="24dp"
-                    android:src="@drawable/ic_location"
-                    app:tint="@color/neutral_text_disabled"/>
-                <TextView
-                    android:text="QFD"
-                    style="@style/Typography.Caption"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textColor="@color/neutral_text_disabled"/>
-            </LinearLayout>
-
-            <LinearLayout
                 android:id="@+id/navMessage"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"

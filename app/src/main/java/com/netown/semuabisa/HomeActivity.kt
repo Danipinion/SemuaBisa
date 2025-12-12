@@ -72,7 +72,6 @@ class HomeActivity : AppCompatActivity() {
     private fun setupBottomNavigation() {
         val navHome = findViewById<LinearLayout>(R.id.navHome)
         val navHistory = findViewById<LinearLayout>(R.id.navHistory)
-        val navQfd = findViewById<LinearLayout>(R.id.navQfd)
         val navMessage = findViewById<LinearLayout>(R.id.navMessage)
         val navProfile = findViewById<LinearLayout>(R.id.navProfile)
 
@@ -88,12 +87,12 @@ class HomeActivity : AppCompatActivity() {
 
         navMessage.setOnClickListener {
             loadFragment(MessagesFragment())
-            updateBottomNav(3)
+            updateBottomNav(2)
         }
 
         navProfile.setOnClickListener {
             loadFragment(ProfileFragment())
-            updateBottomNav(4)
+            updateBottomNav(3)
         }
     }
 
@@ -126,9 +125,8 @@ class HomeActivity : AppCompatActivity() {
         when (index) {
             0 -> { ivHome.setColorFilter(activeColor); tvHome.setTextColor(activeColor) }
             1 -> { ivHistory.setColorFilter(activeColor); tvHistory.setTextColor(activeColor) }
-            // 2 is QFD
-            3 -> { ivMessage?.setColorFilter(activeColor); tvMessage?.setTextColor(activeColor) }
-            4 -> { ivProfile?.setColorFilter(activeColor); tvProfile?.setTextColor(activeColor) }
+            2 -> { ivMessage?.setColorFilter(activeColor); tvMessage?.setTextColor(activeColor) }
+            3 -> { ivProfile?.setColorFilter(activeColor); tvProfile?.setTextColor(activeColor) }
         }
     }
 }
