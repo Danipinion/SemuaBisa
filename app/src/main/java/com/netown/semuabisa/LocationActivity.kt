@@ -53,6 +53,10 @@ import android.view.Window
 import android.graphics.Bitmap
 import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.Drawable
+import androidx.fragment.app.Fragment
+import com.netown.semuabisa.features.messages.ActiveMessagesFragment
+import com.netown.semuabisa.features.messages.CallModeFragment
+import androidx.lifecycle.lifecycleScope
 
 
 class LocationActivity : AppCompatActivity() {
@@ -91,6 +95,7 @@ class LocationActivity : AppCompatActivity() {
     private lateinit var adapterDriver: DriverAdapter
     private val driverList = ArrayList<Driver>()
     private lateinit var suggestionAdapter: ArrayAdapter<PlaceSuggestion>
+    private var trackingJob: Job? = null
 
     data class PlaceSuggestion(val displayName: String, val lat: Double, val lon: Double) {
         override fun toString(): String = displayName
@@ -275,7 +280,6 @@ class LocationActivity : AppCompatActivity() {
     private fun startLiveTracking() {
         if (startPoint == null || selectedDriver == null) return
 
-        // Set Tracking Sheet Data
         findViewById<TextView>(R.id.tvTrackDriverName).text = selectedDriver!!.name
         findViewById<TextView>(R.id.tvTrackRating).text = "⭐ ${selectedDriver!!.rating}"
         findViewById<TextView>(R.id.tvTrackPrice).text = selectedDriver!!.price
@@ -288,48 +292,51 @@ class LocationActivity : AppCompatActivity() {
         addPickupMarker(startPoint!!)
         if (endPoint != null) addDropoffMarker(endPoint!!)
 
-        // Driver starts slightly away
         driverLocation = GeoPoint(startPoint!!.latitude + 0.003, startPoint!!.longitude + 0.003)
         addDriverMarker(driverLocation!!)
         zoomToFitTracking(driverLocation!!, startPoint!!)
 
         transitionToSheet(trackingSheetBehavior)
 
-        CoroutineScope(Dispatchers.Main).launch {
+        // Cancel previous job if any
+        trackingJob?.cancel()
+
+        // Use lifecycleScope.launch so it dies with the Activity
+        trackingJob = lifecycleScope.launch {
             findViewById<TextView>(R.id.tvTrackStatus).text = "Driver Arriving"
 
             // Phase 1: Driver to Pickup
             val routeToPickup = fetchRoutePoints(driverLocation!!, startPoint!!)
             if (routeToPickup.isNotEmpty()) {
-                drawPolyline(routeToPickup, Color.BLUE)
-                animateMarker(driverMarker!!, routeToPickup, 4000) // Faster for demo
+                // Check if activity is still valid
+                if (!isFinishing && !isDestroyed) {
+                    drawPolyline(routeToPickup, Color.BLUE)
+                    animateMarker(driverMarker!!, routeToPickup, 4000)
+                }
             }
 
             delay(1000)
 
             if (endPoint != null) {
                 // Phase 2: Pickup to Destination
-                findViewById<TextView>(R.id.tvTrackStatus).text = "On the way"
-                findViewById<TextView>(R.id.tvTrackTime).text = "Arriving soon"
+                if (!isFinishing && !isDestroyed) {
+                    findViewById<TextView>(R.id.tvTrackStatus).text = "On the way"
+                    findViewById<TextView>(R.id.tvTrackTime).text = "Arriving soon"
 
-                // Clear previous route
-                if(routePolyline != null) map.overlays.remove(routePolyline)
+                    if(routePolyline != null) map.overlays.remove(routePolyline)
 
-                val routeToDest = fetchRoutePoints(startPoint!!, endPoint!!)
-                if (routeToDest.isNotEmpty()) {
-                    drawPolyline(routeToDest, Color.GREEN)
-                    zoomToFitTracking(startPoint!!, endPoint!!)
-                    animateMarker(driverMarker!!, routeToDest, 4000) // Faster for demo
+                    val routeToDest = fetchRoutePoints(startPoint!!, endPoint!!)
+                    if (routeToDest.isNotEmpty()) {
+                        drawPolyline(routeToDest, Color.GREEN)
+                        zoomToFitTracking(startPoint!!, endPoint!!)
+                        animateMarker(driverMarker!!, routeToDest, 4000)
+                    }
+
+                    // Phase 3: Arrived
+                    findViewById<TextView>(R.id.tvTrackStatus).text = "Arrived"
+                    findViewById<TextView>(R.id.tvArrivedPrice).text = selectedDriver!!.price
+                    transitionToSheet(arrivedSheetBehavior)
                 }
-
-                // Phase 3: Arrived
-                findViewById<TextView>(R.id.tvTrackStatus).text = "Arrived"
-
-                // Fill data for Arrived Sheet
-                findViewById<TextView>(R.id.tvArrivedPrice).text = selectedDriver!!.price
-
-                // Transition to Arrived Sheet
-                transitionToSheet(arrivedSheetBehavior)
             }
         }
     }
@@ -341,6 +348,7 @@ class LocationActivity : AppCompatActivity() {
         val steps = (durationMs / interval).toInt()
         val pointsCount = points.size
         for (i in 0..steps) {
+            if (isFinishing || isDestroyed) return
             val progress = i.toFloat() / steps
             val currentIndex = (progress * (pointsCount - 1)).toInt()
             if (currentIndex < points.size) {
@@ -380,7 +388,9 @@ class LocationActivity : AppCompatActivity() {
     }
 
     private fun drawPolyline(points: ArrayList<GeoPoint>, color: Int) {
+        if (isFinishing || isDestroyed) return
         if (routePolyline != null) map.overlays.remove(routePolyline)
+
         routePolyline = Polyline(map)
         routePolyline?.setPoints(points)
         routePolyline?.outlinePaint?.color = color
@@ -390,6 +400,7 @@ class LocationActivity : AppCompatActivity() {
     }
 
     private fun addDriverMarker(point: GeoPoint) {
+        if (isFinishing || isDestroyed) return
         driverMarker = Marker(map)
         driverMarker?.position = point
         driverMarker?.setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM)
@@ -407,6 +418,7 @@ class LocationActivity : AppCompatActivity() {
     }
 
     private fun zoomToFitTracking(p1: GeoPoint, p2: GeoPoint) {
+        if (isFinishing || isDestroyed) return
         val boundingBox = BoundingBox(
             maxOf(p1.latitude, p2.latitude),
             maxOf(p1.longitude, p2.longitude),
@@ -416,15 +428,23 @@ class LocationActivity : AppCompatActivity() {
         map.zoomToBoundingBox(boundingBox, true, 150)
     }
 
+    fun loadFragment(fragment: Fragment) {
+        supportFragmentManager.beginTransaction()
+            .add(R.id.fragment_container, fragment) // Add on top of everything
+            .addToBackStack(null) // Allow back button to close fragment
+            .commit()
+    }
+
     private fun setupTrackingLogic() {
         findViewById<MaterialButton>(R.id.btnCancelTrip).setOnClickListener {
             showCancelConfirmationDialog()
         }
         findViewById<ImageButton>(R.id.btnChat).setOnClickListener {
-            Toast.makeText(this, "Membuka Chat...", Toast.LENGTH_SHORT).show()
+            loadFragment(ActiveMessagesFragment())
         }
+
         findViewById<ImageButton>(R.id.btnCall).setOnClickListener {
-            Toast.makeText(this, "Menelpon Driver...", Toast.LENGTH_SHORT).show()
+            loadFragment(CallModeFragment())
         }
     }
 
