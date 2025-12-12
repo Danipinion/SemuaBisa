@@ -12,21 +12,19 @@
         android:padding="20dp">
 
         <ImageView
-            android:id="@+id/imgTrain"
+            android:id="@+id/imgTransport"
             android:layout_width="230dp"
             android:layout_height="130dp"
             android:layout_gravity="center"
-            android:contentDescription="train"
-            android:src="@drawable/train" />
-
-        <TextView
-            android:id="@+id/txtBooking"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="12dp"
-            android:text="Book Ticket"
-            android:textSize="24sp"
-            android:textStyle="bold" />
+            android:contentDescription="Transport Icon"
+            android:src="@drawable/train" /> <TextView
+        android:id="@+id/txtBooking"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="12dp"
+        android:text="Book Ticket"
+        android:textSize="24sp"
+        android:textStyle="bold" />
 
         <TextView
             android:layout_width="match_parent"
@@ -213,12 +211,6 @@
                         android:layout_height="wrap_content"
                         android:checked="true"
                         android:text="Single Journey" />
-
-                    <RadioButton
-                        android:id="@+id/rbReturn"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Return Journey" />
                 </RadioGroup>
             </LinearLayout>
 

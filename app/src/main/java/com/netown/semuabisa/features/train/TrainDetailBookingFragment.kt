@@ -12,7 +12,6 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import com.netown.semuabisa.R
-import com.netown.semuabisa.features.train.TrainActivity
 import java.util.Calendar
 
 class TrainDetailBookingFragment : Fragment() {
@@ -28,6 +27,28 @@ class TrainDetailBookingFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        // Get Vehicle Type from Activity
+        val vehicleType = (activity as? TrainActivity)?.vehicleType ?: "Train"
+
+        // Set Dynamic Icon and Text
+        val imgTransport = view.findViewById<ImageView>(R.id.imgTransport)
+        val txtBooking = view.findViewById<TextView>(R.id.txtBooking)
+
+        when (vehicleType) {
+            "Train" -> {
+                imgTransport.setImageResource(R.drawable.train)
+                txtBooking.text = "Book Train Ticket"
+            }
+            "Bus" -> {
+                imgTransport.setImageResource(R.drawable.bus)
+                txtBooking.text = "Book Bus Ticket"
+            }
+            "Plane" -> {
+                imgTransport.setImageResource(R.drawable.plane)
+                txtBooking.text = "Book Flight Ticket"
+            }
+        }
 
         val edtFrom = view.findViewById<EditText>(R.id.edtFrom)
         val edtTo = view.findViewById<EditText>(R.id.edtTo)

@@ -6,10 +6,11 @@ import androidx.fragment.app.Fragment
 import com.netown.semuabisa.R
 
 class TrainActivity : AppCompatActivity() {
-
+    var vehicleType: String = "Train"
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_train)
+        vehicleType = intent.getStringExtra("VEHICLE_TYPE") ?: "Train"
 
         if (savedInstanceState == null) {
             loadFragment(TrainDetailBookingFragment(), false)

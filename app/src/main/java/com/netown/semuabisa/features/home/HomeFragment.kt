@@ -43,9 +43,23 @@ class HomeFragment : Fragment() {
         val menuTrain = view.findViewById<ImageView>(R.id.menuTrain)
         menuTrain.setOnClickListener {
             val intent = Intent(requireContext(), TrainActivity::class.java)
+            intent.putExtra("VEHICLE_TYPE", "Train")
             startActivity(intent)
         }
 
+        val menuBus = view.findViewById<ImageView>(R.id.menuBus)
+        menuBus.setOnClickListener {
+            val intent = Intent(requireContext(), TrainActivity::class.java)
+            intent.putExtra("VEHICLE_TYPE", "Bus")
+            startActivity(intent)
+        }
+
+        val menuPlane = view.findViewById<ImageView>(R.id.menuPlane)
+        menuPlane.setOnClickListener {
+            val intent = Intent(requireContext(), TrainActivity::class.java)
+            intent.putExtra("VEHICLE_TYPE", "Plane")
+            startActivity(intent)
+        }
         val btnNotification = view.findViewById<ImageButton>(R.id.btnNotification)
         btnNotification.setOnClickListener {
             (activity as? HomeActivity)?.loadFragment(NotificationFragment())

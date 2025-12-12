@@ -118,6 +118,7 @@
                 android:src="@drawable/car" />
 
             <ImageView
+                android:id="@+id/menuBus"
                 android:layout_width="0dp"
                 android:layout_height="60dp"
                 android:layout_columnWeight="1"
@@ -137,6 +138,7 @@
                 android:src="@drawable/train" />
 
             <ImageView
+                android:id="@+id/menuPlane"
                 android:layout_width="0dp"
                 android:layout_height="60dp"
                 android:layout_columnWeight="1"

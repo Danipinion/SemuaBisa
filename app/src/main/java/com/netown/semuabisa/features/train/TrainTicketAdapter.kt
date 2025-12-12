@@ -4,13 +4,13 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
-import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.netown.semuabisa.R
 
 class TrainTicketAdapter(
     private val trains: List<TrainTicket>,
+    private val vehicleType: String, // Receive vehicle type
     private val onSelect: (TrainTicket) -> Unit
 ) : RecyclerView.Adapter<TrainTicketAdapter.ViewHolder>() {
 
@@ -19,6 +19,7 @@ class TrainTicketAdapter(
         val txtFrom = item.findViewById<TextView>(R.id.txtFrom)
         val txtTo = item.findViewById<TextView>(R.id.txtTo)
         val txtDuration = item.findViewById<TextView>(R.id.txtDuration)
+        val imgIcon = item.findViewById<ImageView>(R.id.imgTransportIcon) // Bind Icon
         val btnSelect = item.findViewById<ImageView>(R.id.right_button)
     }
 
@@ -28,7 +29,6 @@ class TrainTicketAdapter(
         return ViewHolder(v)
     }
 
-
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val item = trains[position]
 
@@ -36,6 +36,14 @@ class TrainTicketAdapter(
         holder.txtFrom.text = item.from
         holder.txtTo.text = item.to
         holder.txtDuration.text = "Duration: ${item.duration}"
+
+        // Set Dynamic Icon
+        val iconRes = when (vehicleType) {
+            "Bus" -> R.drawable.bus
+            "Plane" -> R.drawable.plane
+            else -> R.drawable.train // Default Train
+        }
+        holder.imgIcon.setImageResource(iconRes)
 
         holder.itemView.setOnClickListener { onSelect(item) }
     }
