@@ -63,8 +63,7 @@ class TrainSelectSeatFragment : Fragment(R.layout.fragment_train_select_seat) {
 
         btnContinue?.setOnClickListener {
             if (selectedCount == totalPassengers) {
-                // Navigate to next screen (Payment/Ticket details)
-                (activity as? TrainActivity)?.loadFragment(TicketTrainFragment())
+                (activity as? TrainActivity)?.loadFragment(TrainPaymentFragment())
             } else {
                 Toast.makeText(context, "Harap pilih $totalPassengers kursi", Toast.LENGTH_SHORT).show()
             }
