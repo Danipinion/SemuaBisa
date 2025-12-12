@@ -19,6 +19,7 @@ import androidx.core.view.updateLayoutParams
 import android.view.ViewGroup.MarginLayoutParams
 import android.util.TypedValue
 import androidx.fragment.app.FragmentContainerView
+import com.netown.semuabisa.features.profile.ProfileFragment
 
 class HomeActivity : AppCompatActivity() {
 
@@ -91,7 +92,7 @@ class HomeActivity : AppCompatActivity() {
         }
 
         navProfile.setOnClickListener {
-            loadFragment(HistoryRecentFragment())
+            loadFragment(ProfileFragment())
             updateBottomNav(4)
         }
     }
@@ -110,6 +111,8 @@ class HomeActivity : AppCompatActivity() {
         val tvHistory = findViewById<TextView>(R.id.tvNavHistory)
         val ivMessage = findViewById<ImageView>(R.id.ivNavMessage)
         val tvMessage = findViewById<TextView>(R.id.tvNavMessage)
+        val ivProfile = findViewById<ImageView>(R.id.ivNavProfile)
+        val tvProfile = findViewById<TextView>(R.id.tvNavProfile)
 
         val activeColor = ContextCompat.getColor(this, R.color.primary_500)
         val inactiveColor = ContextCompat.getColor(this, R.color.neutral_text_disabled)
@@ -118,13 +121,14 @@ class HomeActivity : AppCompatActivity() {
         ivHome.setColorFilter(inactiveColor); tvHome.setTextColor(inactiveColor)
         ivHistory.setColorFilter(inactiveColor); tvHistory.setTextColor(inactiveColor)
         ivMessage?.setColorFilter(inactiveColor); tvMessage?.setTextColor(inactiveColor)
+        ivProfile?.setColorFilter(inactiveColor); tvProfile?.setTextColor(inactiveColor)
 
         when (index) {
             0 -> { ivHome.setColorFilter(activeColor); tvHome.setTextColor(activeColor) }
             1 -> { ivHistory.setColorFilter(activeColor); tvHistory.setTextColor(activeColor) }
             // 2 is QFD
             3 -> { ivMessage?.setColorFilter(activeColor); tvMessage?.setTextColor(activeColor) }
-            // 4 is Profile
+            4 -> { ivProfile?.setColorFilter(activeColor); tvProfile?.setTextColor(activeColor) }
         }
     }
 }
