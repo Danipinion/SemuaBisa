@@ -17,7 +17,8 @@
             android:src="@drawable/outline_arrow_back_24"
             android:layout_width="24dp"
             android:layout_height="24dp"
-            android:id="@+id/btnBack"/>
+            android:id="@+id/btnBack"
+            android:background="@null"/>
 
         <TextView
             android:id="@+id/txtSelectedSeat"

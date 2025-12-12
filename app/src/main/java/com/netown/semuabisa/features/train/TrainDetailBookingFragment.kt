@@ -54,7 +54,6 @@ class TrainDetailBookingFragment : Fragment() {
             datePickerDialog.show()
         }
 
-
         view.findViewById<ImageView>(R.id.btnPlusAdult).setOnClickListener {
             if (adultCount < 10) {
                 adultCount++
@@ -109,7 +108,16 @@ class TrainDetailBookingFragment : Fragment() {
                 return@setOnClickListener
             }
 
-            (activity as? TrainActivity)?.loadFragment(TrainSelectTicketFragment())
+            // Calculate Total Seats
+            val totalPassengers = adultCount + childCount
+
+            // Pass data to next fragment
+            val fragment = TrainSelectTicketFragment()
+            val bundle = Bundle()
+            bundle.putInt("TOTAL_PASSENGER", totalPassengers)
+            fragment.arguments = bundle
+
+            (activity as? TrainActivity)?.loadFragment(fragment)
         }
     }
 }

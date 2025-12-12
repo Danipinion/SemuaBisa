@@ -9,7 +9,7 @@ import com.netown.semuabisa.R
 
 class TrainSeatAdapter(
     private val seats: List<Seat>,
-    private val onSeatSelected: (Seat) -> Unit
+    private val onSeatClick: (Seat, Int) -> Unit // Return Seat and Position
 ) : RecyclerView.Adapter<TrainSeatAdapter.ViewHolder>() {
 
     inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
@@ -26,7 +26,7 @@ class TrainSeatAdapter(
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val seat = seats[position]
 
-        // 🔵 SET UI SESUAI STATUS
+        // Set UI based on status
         when (seat.status) {
             SeatStatus.AVAILABLE -> {
                 holder.seatBox.setBackgroundResource(R.drawable.available)
@@ -42,17 +42,9 @@ class TrainSeatAdapter(
             }
         }
 
-        // 🟦 Klik seat
+        // Handle Click - Delegate logic to Fragment
         holder.itemView.setOnClickListener {
-            if (seat.status == SeatStatus.AVAILABLE) {
-                seat.status = SeatStatus.SELECTED
-                onSeatSelected(seat)
-                notifyItemChanged(position)
-            } else if (seat.status == SeatStatus.SELECTED) {
-                seat.status = SeatStatus.AVAILABLE
-                onSeatSelected(seat)
-                notifyItemChanged(position)
-            }
+            onSeatClick(seat, position)
         }
     }
 

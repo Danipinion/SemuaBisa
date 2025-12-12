@@ -14,10 +14,6 @@ class TicketTrainFragment : Fragment(R.layout.fragment_ticket_train) {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        view.findViewById<ImageButton>(R.id.btnBack)?.setOnClickListener {
-            parentFragmentManager.popBackStack()
-        }
-
         view.findViewById<Button>(R.id.btnHome)?.setOnClickListener {
             Toast.makeText(context, "Terima kasih, pesanan selesai!", Toast.LENGTH_SHORT).show()
             (activity as? TrainActivity)?.goBackToHome()

@@ -10,18 +10,20 @@ import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.netown.semuabisa.HomeActivity
 import com.netown.semuabisa.R
 
 class HistoryRecentFragment : Fragment() {
 
     private lateinit var recycler: RecyclerView
     private lateinit var adapter: HistoryAdapter
-
+    private var currentTab = "Recent"
     // Tabs
     private lateinit var tabSchedule: TextView
     private lateinit var tabRecent: TextView
     private lateinit var tabCompleted: TextView
     private lateinit var tabCanceled: TextView
+
 
     // Colors
     private val activeColor = Color.parseColor("#0066FF") // Blue
@@ -90,6 +92,7 @@ class HistoryRecentFragment : Fragment() {
     }
 
     private fun loadData(type: String) {
+        currentTab = type
         val data = when (type) {
             "Schedule" -> getScheduleData()
             "Recent" -> getRecentData()
@@ -98,7 +101,23 @@ class HistoryRecentFragment : Fragment() {
             else -> emptyList()
         }
 
-        adapter = HistoryAdapter(data)
+        // Updated Adapter init with Click Listener
+        adapter = HistoryAdapter(data) { item ->
+            // Logic: Only open ticket if it's a "Schedule" item (Train/Bus)
+            // or if you want to open it for any item, remove the if check.
+            if (currentTab == "Schedule" || item.type == "Train" || item.type == "Bus") {
+                val fragment = HistoryTicketFragment()
+                val bundle = Bundle()
+                bundle.putString("ORIGIN", item.fromAddress)
+                bundle.putString("DEST", item.toAddress)
+                bundle.putString("DATE", item.dateTime)
+                bundle.putString("TRAIN", item.driver) // Assuming driver field has Train Name
+                bundle.putString("SEAT", item.seats)
+                fragment.arguments = bundle
+
+                (activity as? HomeActivity)?.loadFragment(fragment)
+            }
+        }
         recycler.adapter = adapter
     }
 

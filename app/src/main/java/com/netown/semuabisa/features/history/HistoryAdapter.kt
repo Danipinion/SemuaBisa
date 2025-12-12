@@ -8,7 +8,7 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.netown.semuabisa.R
 
-class HistoryAdapter(private val list: List<HistoryModel>) :
+class HistoryAdapter(private val list: List<HistoryModel>,private val onItemClick: (HistoryModel) -> Unit) :
     RecyclerView.Adapter<HistoryAdapter.ViewHolder>() {
 
     class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
@@ -49,5 +49,8 @@ class HistoryAdapter(private val list: List<HistoryModel>) :
         holder.txtSeats.text = item.seats
         holder.txtPayment.text = item.paymentStatus
         holder.imgVehicle.setImageResource(iconRes)
+        holder.itemView.setOnClickListener {
+            onItemClick(item)
+        }
     }
 }

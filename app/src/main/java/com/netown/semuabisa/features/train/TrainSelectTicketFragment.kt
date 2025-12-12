@@ -2,7 +2,6 @@ package com.netown.semuabisa.features.train
 
 import android.os.Bundle
 import android.view.View
-import android.widget.Button
 import android.widget.ImageButton
 import android.widget.Toast
 import androidx.fragment.app.Fragment
@@ -14,6 +13,9 @@ import com.netown.semuabisa.features.train.TrainActivity
 class TrainSelectTicketFragment : Fragment(R.layout.fragment_train_select_ticket) {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+
+        // Retrieve the total passengers passed from the previous screen
+        val totalPassengers = arguments?.getInt("TOTAL_PASSENGER") ?: 1
 
         view.findViewById<ImageButton>(R.id.btnBack)?.setOnClickListener {
             parentFragmentManager.popBackStack()
@@ -30,7 +32,13 @@ class TrainSelectTicketFragment : Fragment(R.layout.fragment_train_select_ticket
         val adapter = TrainTicketAdapter(dummyData) { ticket ->
             Toast.makeText(requireContext(), "Selected: ${ticket.name}", Toast.LENGTH_SHORT).show()
 
-            (activity as? TrainActivity)?.loadFragment(TrainSelectSeatFragment())
+            // Pass the count to the Seat Selection Fragment
+            val fragment = TrainSelectSeatFragment()
+            val bundle = Bundle()
+            bundle.putInt("TOTAL_PASSENGER", totalPassengers)
+            fragment.arguments = bundle
+
+            (activity as? TrainActivity)?.loadFragment(fragment)
         }
 
         recyclerView.layoutManager = LinearLayoutManager(requireContext())

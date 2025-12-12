@@ -3,7 +3,8 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#F5F5F5">
+    android:background="#F5F5F5"
+    android:fillViewport="true">
 
     <LinearLayout
         android:orientation="vertical"
@@ -11,13 +12,18 @@
         android:layout_height="wrap_content"
         android:padding="16dp">
 
-        <!-- ===== HEADER ===== -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="55dp"
             android:gravity="center_vertical"
             android:paddingHorizontal="10dp"
             android:background="@android:color/white">
+
+            <ImageView
+                android:id="@+id/btnBack"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:src="@drawable/outline_arrow_back_24"/>
 
             <TextView
                 android:layout_width="0dp"
@@ -26,10 +32,9 @@
                 android:text="Your Ticket"
                 android:textSize="18sp"
                 android:textStyle="bold"
-                android:gravity="center"/>
-        </LinearLayout>
+                android:gravity="center"
+                android:layout_marginEnd="24dp"/> </LinearLayout>
 
-        <!-- ===== TICKET BOX ===== -->
         <LinearLayout
             android:orientation="vertical"
             android:background="@android:color/white"
@@ -39,7 +44,6 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
-            <!-- Ticket Number -->
             <TextView
                 android:id="@+id/ticketId"
                 android:layout_width="wrap_content"
@@ -47,7 +51,6 @@
                 android:text="2-9097"
                 android:textSize="16sp"
                 android:textStyle="bold"
-                android:gravity="center"
                 android:layout_gravity="center"/>
 
             <TextView
@@ -56,11 +59,9 @@
                 android:layout_height="wrap_content"
                 android:text="160621-1615"
                 android:textSize="14sp"
-                android:gravity="center"
                 android:layout_marginTop="4dp"
                 android:layout_gravity="center"/>
 
-            <!-- ROUTE -->
             <TextView
                 android:id="@+id/route"
                 android:layout_width="wrap_content"
@@ -71,7 +72,6 @@
                 android:layout_marginTop="8dp"
                 android:layout_gravity="center"/>
 
-            <!-- Date -->
             <TextView
                 android:id="@+id/ticketDate"
                 android:layout_width="wrap_content"
@@ -81,7 +81,6 @@
                 android:layout_marginTop="4dp"
                 android:layout_gravity="center"/>
 
-            <!-- ROUTE LOCATIONS -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -90,6 +89,7 @@
                 android:layout_marginTop="16dp">
 
                 <TextView
+                    android:id="@+id/txtOrigin"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Madiun"
@@ -99,17 +99,16 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:src="@drawable/line_5"
-                    android:layout_marginHorizontal="10dp"
-                    android:background="#fff"/>
+                    android:layout_marginHorizontal="10dp"/>
 
                 <TextView
+                    android:id="@+id/txtDestination"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Jakarta"
                     android:textSize="14sp"/>
             </LinearLayout>
 
-            <!-- TIME DETAILS -->
             <LinearLayout
                 android:orientation="horizontal"
                 android:layout_marginTop="16dp"
@@ -132,7 +131,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:id="@+id/depTime"
-                        android:text="5:00PM"
+                        android:text="5:00 PM"
                         android:textStyle="bold"
                         android:textSize="14sp"/>
                 </LinearLayout>
@@ -154,20 +153,18 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:id="@+id/arrTime"
-                        android:text="9:30PM"
+                        android:text="9:30 PM"
                         android:textStyle="bold"
                         android:textSize="14sp"/>
                 </LinearLayout>
             </LinearLayout>
 
-            <!-- PASSENGERS + TRAIN TYPE -->
             <LinearLayout
                 android:orientation="horizontal"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp">
 
-                <!-- PASSENGERS -->
                 <LinearLayout
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
@@ -184,12 +181,11 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:id="@+id/passengers"
-                        android:text="3"
+                        android:text="1"
                         android:textStyle="bold"
                         android:textSize="14sp"/>
                 </LinearLayout>
 
-                <!-- TRAIN NAME -->
                 <LinearLayout
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
@@ -213,7 +209,6 @@
                 </LinearLayout>
             </LinearLayout>
 
-            <!-- FEATURES -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -222,7 +217,7 @@
                 android:gravity="center_vertical">
 
                 <LinearLayout
-                    android:layout_width="wrap_content"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:orientation="vertical">
@@ -234,96 +229,65 @@
                     <LinearLayout
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_weight="1"
+                        android:layout_marginTop="4dp"
                         android:orientation="horizontal">
 
                         <ImageView
                             android:src="@drawable/outline_wifi_24"
                             android:layout_width="20dp"
                             android:layout_height="20dp"
-                            android:layout_marginEnd="16dp"/>
+                            android:layout_marginEnd="16dp"
+                            android:tint="#444"/>
 
                         <ImageView
                             android:src="@drawable/toilet"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"/>
+                            android:layout_width="20dp"
+                            android:layout_height="20dp"
+                            android:tint="#444"/>
                     </LinearLayout>
                 </LinearLayout>
 
                 <LinearLayout
-                    android:layout_width="wrap_content"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
+                    android:gravity="end"
                     android:orientation="vertical">
 
-                    <!-- SEAT NUMBERS -->
                     <TextView
-                        android:id="@+id/seat"
-                        android:layout_width="match_parent"
+                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Seat "
-                        android:textAlignment="textEnd"
-                        android:textSize="14sp"
+                        android:text="Seat"
+                        android:textSize="12sp"/>
+
+                    <TextView
+                        android:id="@+id/seatNumber"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="13, 14"
                         android:textStyle="bold"
-                        android:layout_marginTop="16dp"/>
-
-
-
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:gravity="end"
-                        android:orientation="vertical">
-
-                        <TextView
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_marginEnd="0dp"
-                            android:text="13, 14, 15"
-                            android:textAlignment="textEnd" />
-                    </LinearLayout>
-
+                        android:textSize="14sp"/>
                 </LinearLayout>
 
             </LinearLayout>
 
-            <!-- PRICE -->
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Total Price"
-                android:layout_marginTop="16dp"
-                android:textSize="12sp"/>
+                android:textSize="12sp"
+                android:layout_marginTop="16dp"/>
 
             <TextView
                 android:id="@+id/totalPrice"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Rp. 570.121"
+                android:text="Rp. 150.000"
+                android:textSize="18sp"
                 android:textStyle="bold"
-                android:textSize="16sp"/>
-
-            <!-- QR CODE -->
-            <ImageView
-                android:id="@+id/qrCode"
-                android:layout_width="130dp"
-                android:layout_height="130dp"
-                android:layout_marginTop="20dp"
-                android:layout_gravity="center"
-                android:src="@drawable/baseline_qr_code_24"/>
+                android:textColor="@color/primary_500"/>
 
         </LinearLayout>
-
-        <Button
-            android:id="@+id/btnHome"
-            android:layout_width="match_parent"
-            android:layout_height="50dp"
-            android:layout_marginTop="8dp"
-            android:text="Home"
-            android:textAllCaps="false"
-            android:textColor="@android:color/white"
-            android:backgroundTint="#3B82F6"/>
 
     </LinearLayout>
 </androidx.core.widget.NestedScrollView>
